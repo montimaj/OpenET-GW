@@ -1,0 +1,1 @@
+Logos for the main documentation

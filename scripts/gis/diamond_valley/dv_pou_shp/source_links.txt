@@ -1,0 +1,2 @@
+Nevada Place of use shapefile
+https://data-ndwr.hub.arcgis.com/datasets/NDWR::water-rights-places-of-use/about

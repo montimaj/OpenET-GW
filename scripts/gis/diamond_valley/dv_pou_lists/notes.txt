@@ -1,0 +1,2 @@
+These files are used to remove or select POU assets when processing the shapfefiles.
+These were generated mannualy to some degree.
