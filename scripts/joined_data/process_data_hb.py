@@ -5,9 +5,9 @@ year_list = [2016, 2017, 2018, 2019, 2020, 2021, 2022]
 
 # Read ET and Pumping tables
 # ET table
-et_df = pd.read_csv(r'..\openet_data\hb_openet_data_2016_2022.csv')
-pumping_df = pd.read_excel(r'..\pumping_data\harney_basin\Harney_PumpingWell_FieldID_WUR_Relationship_2016_2022.xlsx', header=1)
-prz_factor = pd.read_csv(r'..\et-demands\harney_basin\effective_precip_fraction.csv')
+et_df = pd.read_csv('../openet_data/hb_openet_data_2016_2022.csv')
+pumping_df = pd.read_excel('../pumping_data/harney_basin/Harney_PumpingWell_FieldID_WUR_Relationship_2016_2022.xlsx', header=1)
+prz_factor = pd.read_csv('../et-demands/harney_basin/effective_precip_fraction.csv')
 
 # Build join table
 join_table = pumping_df.loc[:,['WUR_Report_ID', 'FID_1', 'FID_2', 'FID_3']]
