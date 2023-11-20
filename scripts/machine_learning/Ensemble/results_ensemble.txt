@@ -1,0 +1,160 @@
+/Users/Sayantan.Majumdar@dri.edu/miniconda3/envs/openetgw/bin/python /Users/Sayantan.Majumdar@dri.edu/PyCharmProjects/OpenET-GW/scripts/machine_learning/ml_comp.py 
+
+Searching best params for LGBM...
+Train Results...
+R2: 0.8273427682438609 RMSE: 63.0905646203325 MAE: 47.35542855143196
+Validation Results...
+R2: 0.550875584198885 RMSE: 108.05125145542806 MAE: 84.79371898221385
+Best params:  {'subsample': 1, 'path_smooth': 0.2, 'num_leaves': 31, 'n_estimators': 400, 'min_child_samples': 30, 'max_depth': 16, 'learning_rate': 0.01, 'colsample_bytree': 0.9, 'colsample_bynode': 1}
+                        Features    F_IMP
+30     annual_net_et_ensemble_mm  0.17761
+4            annual_et_pt_jpl_mm  0.06428
+21                 soil_depth_mm  0.05413
+23                   elevation_m  0.05131
+22            ksat_mean_micromps  0.04511
+14                 annual_vs_mps  0.04483
+19                   annual_ndvi  0.04314
+2          annual_et_eemetric_mm  0.04088
+18   annual_daymet_precip_eff_mm  0.04060
+27             annual_et_sims_m3  0.03665
+5          annual_et_geesebal_mm  0.03524
+9                  annual_tmmx_K  0.03186
+6          annual_et_disalexi_mm  0.03101
+24           annual_et_ssebop_m3  0.03017
+1            annual_et_ssebop_mm  0.02988
+28         annual_et_geesebal_m3  0.02904
+10                 annual_tmmn_K  0.02509
+3              annual_et_sims_mm  0.02312
+32                       HSG_2.0  0.02227
+26           annual_et_pt_jpl_m3  0.02227
+15                   annual_rmax  0.01635
+0          annual_et_ensemble_mm  0.01466
+11                 annual_eto_mm  0.01466
+29         annual_et_disalexi_m3  0.01353
+16                   annual_rmin  0.01325
+25         annual_et_eemetric_m3  0.01184
+7       annual_gridmet_precip_mm  0.01100
+13                annual_vpd_kPa  0.00930
+12                 annual_etr_mm  0.00789
+8   annual_gridmet_precip_eff_mm  0.00564
+20                    eff_factor  0.00310
+31                       HSG_1.0  0.00028
+17       annual_daymet_precip_mm  0.00000
+33                       HSG_3.0  0.00000
+34                       HSG_4.0  0.00000
+35                       HSG_5.0  0.00000
+36                       HSG_6.0  0.00000
+37                       HSG_7.0  0.00000
+38                       HSG_8.0  0.00000
+39                      HSG_10.0  0.00000
+40                      HSG_12.0  0.00000
+Training+Validation metrics...
+R2: 0.8 RMSE: 10.86 MAE: 8.28
+Test metrics...
+R2: 0.62 RMSE: 14.97 MAE: 11.59
+
+Searching best params for RF...
+Train Results...
+R2: 0.7944771027147686 RMSE: 73.67763766539954 MAE: 59.386529444747545
+Validation Results...
+R2: 0.571185857123449 RMSE: 105.64714746986917 MAE: 83.9194452591922
+Best params:  {'n_estimators': 300, 'min_samples_leaf': 2, 'max_leaf_nodes': 20, 'max_features': 20, 'max_depth': 8}
+                        Features    F_IMP
+30     annual_net_et_ensemble_mm  0.44119
+0          annual_et_ensemble_mm  0.10316
+1            annual_et_ssebop_mm  0.06754
+2          annual_et_eemetric_mm  0.04240
+18   annual_daymet_precip_eff_mm  0.03524
+7       annual_gridmet_precip_mm  0.03168
+5          annual_et_geesebal_mm  0.02996
+8   annual_gridmet_precip_eff_mm  0.02623
+24           annual_et_ssebop_m3  0.02501
+10                 annual_tmmn_K  0.01785
+25         annual_et_eemetric_m3  0.01677
+4            annual_et_pt_jpl_mm  0.01465
+6          annual_et_disalexi_mm  0.01273
+16                   annual_rmin  0.01211
+28         annual_et_geesebal_m3  0.00984
+23                   elevation_m  0.00953
+22            ksat_mean_micromps  0.00925
+21                 soil_depth_mm  0.00909
+15                   annual_rmax  0.00887
+27             annual_et_sims_m3  0.00875
+29         annual_et_disalexi_m3  0.00872
+9                  annual_tmmx_K  0.00840
+3              annual_et_sims_mm  0.00813
+26           annual_et_pt_jpl_m3  0.00811
+19                   annual_ndvi  0.00647
+13                annual_vpd_kPa  0.00607
+14                 annual_vs_mps  0.00575
+12                 annual_etr_mm  0.00487
+11                 annual_eto_mm  0.00400
+36                       HSG_6.0  0.00287
+34                       HSG_4.0  0.00185
+20                    eff_factor  0.00141
+32                       HSG_2.0  0.00092
+35                       HSG_5.0  0.00027
+37                       HSG_7.0  0.00018
+31                       HSG_1.0  0.00013
+33                       HSG_3.0  0.00000
+17       annual_daymet_precip_mm  0.00000
+38                       HSG_8.0  0.00000
+39                      HSG_10.0  0.00000
+40                      HSG_12.0  0.00000
+Training+Validation metrics...
+R2: 0.79 RMSE: 10.96 MAE: 8.82
+Test metrics...
+R2: 0.61 RMSE: 15.18 MAE: 11.78
+
+Searching best params for ETR...
+Train Results...
+R2: 0.8536547418317099 RMSE: 60.99758365802195 MAE: 47.13248325279955
+Validation Results...
+R2: 0.5852945976985382 RMSE: 103.72339255469547 MAE: 81.74327005348974
+Best params:  {'n_estimators': 400, 'min_samples_leaf': 1, 'max_features': 10, 'max_depth': 15}
+                        Features    F_IMP
+30     annual_net_et_ensemble_mm  0.17869
+1            annual_et_ssebop_mm  0.05450
+2          annual_et_eemetric_mm  0.04949
+0          annual_et_ensemble_mm  0.04865
+18   annual_daymet_precip_eff_mm  0.04167
+5          annual_et_geesebal_mm  0.03988
+7       annual_gridmet_precip_mm  0.03969
+8   annual_gridmet_precip_eff_mm  0.03859
+24           annual_et_ssebop_m3  0.03807
+25         annual_et_eemetric_m3  0.03621
+6          annual_et_disalexi_mm  0.03168
+3              annual_et_sims_mm  0.02889
+28         annual_et_geesebal_m3  0.02797
+29         annual_et_disalexi_m3  0.02675
+4            annual_et_pt_jpl_mm  0.02565
+27             annual_et_sims_m3  0.02145
+16                   annual_rmin  0.02082
+20                    eff_factor  0.01822
+13                annual_vpd_kPa  0.01789
+15                   annual_rmax  0.01667
+22            ksat_mean_micromps  0.01663
+21                 soil_depth_mm  0.01660
+9                  annual_tmmx_K  0.01625
+12                 annual_etr_mm  0.01624
+26           annual_et_pt_jpl_m3  0.01623
+19                   annual_ndvi  0.01550
+10                 annual_tmmn_K  0.01540
+11                 annual_eto_mm  0.01465
+14                 annual_vs_mps  0.01431
+23                   elevation_m  0.01423
+32                       HSG_2.0  0.00887
+34                       HSG_4.0  0.00853
+36                       HSG_6.0  0.00830
+31                       HSG_1.0  0.00681
+35                       HSG_5.0  0.00558
+38                       HSG_8.0  0.00165
+37                       HSG_7.0  0.00154
+33                       HSG_3.0  0.00064
+39                      HSG_10.0  0.00060
+17       annual_daymet_precip_mm  0.00000
+40                      HSG_12.0  0.00000
+Training+Validation metrics...
+R2: 0.94 RMSE: 5.95 MAE: 4.65
+Test metrics...
+R2: 0.65 RMSE: 14.36 MAE: 11.31

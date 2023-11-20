@@ -155,7 +155,7 @@ df = pd.read_csv(r'../joined_data/dv_joined_et_pumping_data_all.csv')
 
 # Outlier data
 dv_data = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
-dv_data = dv_data.loc[df['pumping_net_et_factor_annual']>0.5, :]
+dv_data = dv_data.loc[dv_data['pumping_net_et_factor_annual']>0.5, :]
 dv_data = dv_data[dv_data["pumping_mm"] > 0]
 data_column = 'annual_net_et_mm'
 
@@ -264,7 +264,7 @@ df = pd.read_csv(r'../joined_data/dv_joined_et_pumping_data_all.csv')
 
 # Outlier data
 dv_data = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
-dv_data = dv_data.loc[df['pumping_net_et_factor_annual']>0.5, :]
+dv_data = dv_data.loc[dv_data['pumping_net_et_factor_annual']>0.5, :]
 dv_data = dv_data[dv_data["pumping_mm"] > 0]
 
 # Calculate volumes
@@ -401,7 +401,7 @@ plt.clf()
 
 # Outlier data
 dv_data = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
-dv_data = dv_data.loc[df['pumping_net_et_factor_annual']>0.5, :]
+dv_data = dv_data.loc[dv_data['pumping_net_et_factor_annual']>0.5, :]
 dv_data = dv_data[dv_data["pumping_mm"] > 0]
 data_column = 'annual_net_et_mm'
 
@@ -496,7 +496,7 @@ df = pd.read_csv(r'../joined_data/dv_joined_et_pumping_data_all.csv')
 init_samples = df.shape[0]
 # Outlier data
 dv_data = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
-dv_data = dv_data.loc[df['pumping_net_et_factor_annual']>0.5, :]
+dv_data = dv_data.loc[dv_data['pumping_net_et_factor_annual']>0.5, :]
 dv_data = dv_data[dv_data["pumping_mm"] > 0]
 data_column = 'annual_net_et_mm'
 print('DV Samples Removed:', round((init_samples - dv_data.shape[0]) * 100 / init_samples))
@@ -579,7 +579,7 @@ import numpy as np
 
 # Import et data
 df = pd.read_csv(r'../joined_data/dv_joined_et_pumping_data_all.csv')
-df['est_pumping_mm'] = df['annual_net_et_mm']*1.05
+df['est_pumping_mm'] = df['annual_net_et_mm']*1.1
 df['est_pumping_m3'] = df['est_pumping_mm']*df['area_m2']/1000
 df['pumping_m3'] = df['pumping_mm']*df['area_m2']/1000
 df = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
@@ -1206,9 +1206,11 @@ import numpy as np
 
 # Import et data
 df = pd.read_csv(r'../joined_data/hb_joined_et_pumping_data_all.csv')
-df['est_pumping_mm'] = df['annual_net_et_mm']*1.15
+df['est_pumping_mm'] = df['annual_net_et_mm']*1.2
 df['est_pumping_m3'] = df['est_pumping_mm']*df['area_m2']/1000
 df['pumping_m3'] = df['pumping_mm']*df['area_m2']/1000
+df = df[~df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])]
+df = df[df["pumping_mm"] > 0]
 df = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
 df = df.loc[df['pumping_net_et_factor_annual']>0.5, :]
 
@@ -1256,7 +1258,7 @@ plt.xlabel('Year')
 plt.ylabel('GP volume (Mm$^3$)')
 # plt.title('Total Pumping vs Modeled Pumping Harney Basin')
 
-plt.ylim(0, 10)
+plt.ylim(0, 5)
 
 # Show the legend
 plt.legend()
