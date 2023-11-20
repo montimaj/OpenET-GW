@@ -43,7 +43,7 @@ Open Linux/Mac terminal or Windows PowerShell and run the following:
 ```
 conda create -y -n openetgw python=3.11
 conda activate openetgw
-conda install -y -c conda-forge rioxarray geopandas lightgbm earthengine-api rasterstats seaborn openpyxl
+conda install -y -c conda-forge rioxarray geopandas lightgbm earthengine-api rasterstats seaborn openpyxl swifter
 ```
 
 Once the above steps are successfully executed, run the following to load the GDAL_DATA environment variable which is needed by 

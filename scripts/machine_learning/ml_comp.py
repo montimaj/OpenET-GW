@@ -9,6 +9,7 @@ import json
 import pandas as pd
 import ee
 import numpy as np
+import swifter
 import matplotlib.pyplot as plt
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
@@ -344,12 +345,12 @@ def process_dv_data(ml_data_df):
 
 def get_model_param_dict(random_state=0):
     model_dict = {
-        'LGBM': LGBMRegressor(
-            tree_learner='feature', random_state=random_state,
-            deterministic=True, force_row_wise=True,
-            verbosity=-1
-        ),
-        'RF': RandomForestRegressor(random_state=random_state, n_jobs=-1),
+        # 'LGBM': LGBMRegressor(
+        #     tree_learner='feature', random_state=random_state,
+        #     deterministic=True, force_row_wise=True,
+        #     verbosity=-1
+        # ),
+        # 'RF': RandomForestRegressor(random_state=random_state, n_jobs=-1),
         'ETR': ExtraTreesRegressor(random_state=random_state, n_jobs=-1, bootstrap=True)
     }
 
@@ -400,6 +401,60 @@ def get_prediction_stats(actual_values, pred_values, precision=2):
         mae = np.round(mean_absolute_error(actual_values, pred_values) * 100 / mean_actual, precision)
         rmse = np.round(mean_squared_error(actual_values, pred_values, squared=False) * 100 / mean_actual, precision)
     return r2, mae, rmse
+
+
+def get_sklearn_field_metrics(actual_value, row, estimator_list, metric_name='CV'):
+    pred_arr = np.array([estimator.predict(row) for estimator in estimator_list])
+    actual_arr = [actual_value] * pred_arr.size
+    if metric_name == 'CV':
+        metric = np.std(pred_arr) * 100 / np.mean(pred_arr)
+    elif metric_name == 'RMSE':
+        metric = mean_squared_error(actual_arr, pred_arr, squared=False) * 100 / actual_value
+    else:
+        metric = mean_absolute_error(actual_arr, pred_arr) * 100 / actual_value
+    return metric
+
+
+def calc_coeff_var(X, y, ml_model):
+    metric_df = X.copy(deep=True)
+    if isinstance(ml_model, LGBMRegressor):
+        pred_leaf_idx = ml_model.predict(X, pred_leaf=True)
+        df = pd.DataFrame({
+            "LI": pred_leaf_idx.reshape(-1),
+            "x": np.tile(np.arange(pred_leaf_idx.shape[1]), pred_leaf_idx.shape[0]),
+            "y": np.repeat(np.arange(pred_leaf_idx.shape[0]), pred_leaf_idx.shape[1])
+        })
+        df['LV'] = df.swifter.apply(
+            lambda row: ml_model.booster_.get_leaf_output(
+                tree_id=row.x,
+                leaf_id=row.LI
+            ),
+            axis=1
+        )
+        df = df[['LV', 'y']].groupby('y')
+        coeff_var = df.std() / df.mean()
+        metric_df['y'] = y
+        metric_df['CV'] = coeff_var
+    else:
+        X['y'] = y
+        metrics = ['CV', 'RMSE', 'MAE']
+        for metric in metrics:
+            metric_df[metric] = X.swifter.apply(
+                lambda row: get_sklearn_field_metrics(
+                    row[-1],
+                    row[:-1].to_numpy().reshape(1, -1),
+                    ml_model.estimators_,
+                    metric
+                ),
+                axis=1
+            )
+    return metric_df
+
+
+def create_cv_files(X, y, ml_model):
+    df = calc_coeff_var(X.copy(deep=True), y, ml_model)
+    df.to_csv('ML_uncertainty.csv', index=False)
+
 
 
 def build_ml_model(ml_df):
@@ -457,6 +512,7 @@ def build_ml_model(ml_df):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=random_state)
     y = ml_df['pumping_mm']
     scoring_metrics = ['r2', 'neg_root_mean_squared_error', 'neg_mean_absolute_error']
+    model = None
     for model_name in model_dict.keys():
         print('\nSearching best params for {}...'.format(model_name))
         model = model_dict[model_name]
@@ -511,6 +567,7 @@ def build_ml_model(ml_df):
             ax.figure.tight_layout()
             plt.savefig(f'{model_name}_{name}_PI.png', dpi=400)
             plt.clf()
+    create_cv_files(X, y, model)
 
 
 if __name__ == '__main__':
