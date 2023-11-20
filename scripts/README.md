@@ -1,4 +1,4 @@
-# Toward Sustainable Groundwater Management: Harnessing Remote Sensing and Climate Data to Estimate Field-Scale Groundwater Pumping and Irrigation Efficiencies
+## Toward Sustainable Groundwater Management: Harnessing Remote Sensing and Climate Data to Estimate Field-Scale Groundwater Pumping and Irrigation Efficiencies
 
 ### PI: [Justin Huntington](https://www.dri.edu/directory/justin-huntington/)
 ### Software authors/maintainers: [Thomas Ott](https://www.dri.edu/directory/thomas-ott/), [Sayantan Majumdar](https://www.dri.edu/directory/sayantan-majumdar/)

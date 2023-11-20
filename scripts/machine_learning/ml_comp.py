@@ -5,7 +5,6 @@ import os
 
 os.environ['USE_PYGEOS'] = '0'
 import geopandas as gpd
-from shapely.geometry import Point
 import json
 import pandas as pd
 import ee
