@@ -1,10 +1,10 @@
-/Users/Sayantan.Majumdar@dri.edu/miniconda3/envs/openetgw/bin/python /Users/Sayantan.Majumdar@dri.edu/PyCharmProjects/OpenET-GW/scripts/machine_learning/ml_comp.py
+/Users/Sayantan.Majumdar@dri.edu/miniconda3/envs/openetgw/bin/python /Users/Sayantan.Majumdar@dri.edu/PycharmProjects/OpenET-GW/scripts/machine_learning/ml_comp.py
 
 Searching best params for LGBM...
 Train Results...
-R2: 0.8246830881844212 RMSE: 63.9734826540978 MAE: 46.96537595079354
+R2: 0.82, RMSE: 9.36%, MAE: 6.87%, CV: 19.53%
 Validation Results...
-R2: 0.5504286695289513 RMSE: 109.48540708288749 MAE: 83.42432364085569
+R2: 0.55, RMSE: 16.04%, MAE: 12.23%, CV: 18.17%
 Best params:  {'subsample': 0.9, 'path_smooth': 0.1, 'num_leaves': 31, 'n_estimators': 500, 'min_child_samples': 40, 'max_depth': -1, 'learning_rate': 0.01, 'colsample_bytree': 1, 'colsample_bynode': 1}
                         Features    F_IMP
 30     annual_net_et_disalexi_mm  0.15536
@@ -48,15 +48,17 @@ Best params:  {'subsample': 0.9, 'path_smooth': 0.1, 'num_leaves': 31, 'n_estima
 17       annual_daymet_precip_mm  0.00000
 39                      HSG_10.0  0.00000
 Training+Validation metrics...
-R2: 0.77 RMSE: 11.6 MAE: 8.58
+R2: 0.77, RMSE: 11.6%, MAE: 8.58%, CV: 18.96%
 Test metrics...
-R2: 0.6 RMSE: 15.83 MAE: 12.31
+R2: 0.6, RMSE: 15.83%, MAE: 12.31%, CV: 18.73%
+Avg train rmse increase: 9.753353371229586%
+Avg test rmse increase: 9.013230870871052%
 
 Searching best params for RF...
 Train Results...
-R2: 0.7950564433725797 RMSE: 74.28466453198173 MAE: 59.700878783112294
+R2: 0.8, RMSE: 10.86%, MAE: 8.73%, CV: 18.02%
 Validation Results...
-R2: 0.5499789558661405 RMSE: 109.57798336119508 MAE: 85.15453008346655
+R2: 0.55, RMSE: 16.05%, MAE: 12.48%, CV: 16.86%
 Best params:  {'n_estimators': 300, 'min_samples_leaf': 2, 'max_leaf_nodes': 20, 'max_features': 20, 'max_depth': 8}
                         Features    F_IMP
 30     annual_net_et_disalexi_mm  0.42463
@@ -100,15 +102,17 @@ Best params:  {'n_estimators': 300, 'min_samples_leaf': 2, 'max_leaf_nodes': 20,
 38                       HSG_8.0  0.00000
 39                      HSG_10.0  0.00000
 Training+Validation metrics...
-R2: 0.8 RMSE: 10.87 MAE: 8.64
+R2: 0.8, RMSE: 10.87%, MAE: 8.64%, CV: 18.36%
 Test metrics...
-R2: 0.64 RMSE: 15.16 MAE: 11.75
+R2: 0.64, RMSE: 15.16%, MAE: 11.75%, CV: 18.48%
+Avg train rmse increase: 9.251872801290002%
+Avg test rmse increase: 7.066398422776461%
 
 Searching best params for ETR...
 Train Results...
-R2: 0.8477587385160547 RMSE: 62.8249459018124 MAE: 48.11178827241125
+R2: 0.85, RMSE: 9.19%, MAE: 7.04%, CV: 18.65%
 Validation Results...
-R2: 0.5741619660503743 RMSE: 106.59919422866719 MAE: 82.93317839454241
+R2: 0.57, RMSE: 15.61%, MAE: 12.15%, CV: 16.75%
 Best params:  {'n_estimators': 400, 'min_samples_leaf': 2, 'max_features': None, 'max_depth': None}
                         Features    F_IMP
 30     annual_net_et_disalexi_mm  0.43485
@@ -152,6 +156,8 @@ Best params:  {'n_estimators': 400, 'min_samples_leaf': 2, 'max_features': None,
 33                       HSG_3.0  0.00000
 17       annual_daymet_precip_mm  0.00000
 Training+Validation metrics...
-R2: 0.88 RMSE: 8.33 MAE: 6.2
+R2: 0.88, RMSE: 8.33%, MAE: 6.2%, CV: 19.71%
 Test metrics...
-R2: 0.64 RMSE: 15.16 MAE: 11.75
+R2: 0.64, RMSE: 15.16%, MAE: 11.75%, CV: 18.89%
+Avg train rmse increase: 12.303775843044658%
+Avg test rmse increase: 7.742787730330744%

@@ -79,16 +79,18 @@ def build_linear_regression():
         pi_upper = np.percentile(residuals, 100 - (1 - confidence_level) * 100 / 2)
 
         # Calculate performance metrics
-        r_squared = r2_score(y, X * final_slope)
-        mae = mean_absolute_error(y, X * final_slope) * 100 / np.mean(y)
-        mse = mean_squared_error(y, X * final_slope)
-        rmse = np.sqrt(mse) * 100 / np.mean(y)
+        predictions = X * final_slope
+        r_squared = r2_score(y, predictions)
+        mae = mean_absolute_error(y, predictions) * 100 / np.mean(y)
+        rmse = mean_squared_error(y, predictions, squared=False) * 100 / np.mean(y)
+        cv = np.std(predictions) * 100 / np.mean(predictions)
 
         et_df = pd.DataFrame({
             'ET Model': [et_name],
             'R2': [r_squared],
             'MAE (%)': [mae],
-            'RMSE (%)': [rmse]
+            'RMSE (%)': [rmse],
+            'CV (%)': [cv]
         })
         metrics_df = pd.concat([metrics_df, et_df])
 
@@ -103,9 +105,13 @@ def build_linear_regression():
 
         # Add text
         plt.text(800, 100,
-                 'y = {:.2f}*x \n$R^2$ = {:.2f} \nRMSE = {:.2f}% \nMAE = {:.2f}%'.format(final_slope, r_squared, rmse,
-                                                                                         mae),
-                 fontsize=18, color='black')
+                 'y = {:.2f}*x \n$R^2$ = {:.2f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(
+                     final_slope, r_squared,
+                     rmse, mae, cv
+                 ),
+                 fontsize=18,
+                 color='black'
+        )
 
         # Add confidence intercal
         plt.fill_between(new_X, ci_upper * new_X, ci_lower * new_X, interpolate=True, color='yellow', alpha=0.3,

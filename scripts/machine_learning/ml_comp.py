@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, make_scorer
 from sklearn.inspection import permutation_importance
 
 
@@ -343,14 +343,26 @@ def process_dv_data(ml_data_df):
     return final_df
 
 
+def neg_root_mean_squared_error_percent(actual_values, pred_values):
+    return mean_squared_error(actual_values, pred_values, squared=False) * 100 / np.mean(actual_values)
+
+
+def neg_mean_absolute_error_percent(actual_values, pred_values):
+    return mean_absolute_error(actual_values, pred_values) * 100 / np.mean(actual_values)
+
+
+def coef_var(actual_values, pred_values):
+    return np.std(pred_values) * 100 / np.mean(pred_values)
+
+
 def get_model_param_dict(random_state=0):
     model_dict = {
-        # 'LGBM': LGBMRegressor(
-        #     tree_learner='feature', random_state=random_state,
-        #     deterministic=True, force_row_wise=True,
-        #     verbosity=-1
-        # ),
-        # 'RF': RandomForestRegressor(random_state=random_state, n_jobs=-1),
+        'LGBM': LGBMRegressor(
+            tree_learner='feature', random_state=random_state,
+            deterministic=True, force_row_wise=True,
+            verbosity=-1
+        ),
+        'RF': RandomForestRegressor(random_state=random_state, n_jobs=-1),
         'ETR': ExtraTreesRegressor(random_state=random_state, n_jobs=-1, bootstrap=True)
     }
 
@@ -382,25 +394,28 @@ def get_model_param_dict(random_state=0):
 def get_grid_search_stats(gs_model):
     scores = gs_model.cv_results_
     print('Train Results...')
-    r2 = scores['mean_train_r2'].mean()
-    rmse = -scores['mean_train_neg_root_mean_squared_error'].mean()
-    mae = -scores['mean_train_neg_mean_absolute_error'].mean()
-    print('R2:', r2, 'RMSE:', rmse, 'MAE:', mae)
+    r2 = np.round(scores['mean_train_r2'].mean(), 2)
+    rmse = np.round(-scores['mean_train_neg_root_mean_squared_error_percent'].mean(), 2)
+    mae = np.round(-scores['mean_train_neg_mean_absolute_error_percent'].mean(), 2)
+    cv = np.round(-scores['mean_train_coef_var'].mean(), 2)
+    print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
     print('Validation Results...')
-    r2 = scores['mean_test_r2'].mean()
-    rmse = -scores['mean_test_neg_root_mean_squared_error'].mean()
-    mae = -scores['mean_test_neg_mean_absolute_error'].mean()
-    print('R2:', r2, 'RMSE:', rmse, 'MAE:', mae)
+    r2 = np.round(scores['mean_test_r2'].mean(), 2)
+    rmse = np.round(-scores['mean_test_neg_root_mean_squared_error_percent'].mean(), 2)
+    mae = np.round(-scores['mean_test_neg_mean_absolute_error_percent'].mean(), 2)
+    cv = np.round(-scores['mean_test_coef_var'].mean(), 2)
+    print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
 
 
 def get_prediction_stats(actual_values, pred_values, precision=2):
-    r2, mae, rmse = (np.nan,) * 3
+    r2, mae, rmse, cv = (np.nan,) * 4
     mean_actual = np.mean(actual_values)
     if actual_values.size and pred_values.size:
         r2 = np.round(r2_score(actual_values, pred_values), precision)
         mae = np.round(mean_absolute_error(actual_values, pred_values) * 100 / mean_actual, precision)
         rmse = np.round(mean_squared_error(actual_values, pred_values, squared=False) * 100 / mean_actual, precision)
-    return r2, mae, rmse
+        cv = np.round(np.std(pred_values) / np.mean(pred_values) * 100, precision)
+    return r2, mae, rmse, cv
 
 
 def get_sklearn_field_metrics(actual_value, row, estimator_list, metric_name='CV'):
@@ -415,8 +430,10 @@ def get_sklearn_field_metrics(actual_value, row, estimator_list, metric_name='CV
     return metric
 
 
-def calc_coeff_var(X, y, ml_model):
-    metric_df = X.copy(deep=True)
+def calc_coeff_var(input_df, drop_attrs, ml_model):
+    X = input_df.drop(columns=drop_attrs)
+    y = input_df['pumping_mm']
+    metric_df = input_df.copy(deep=True)
     if isinstance(ml_model, LGBMRegressor):
         pred_leaf_idx = ml_model.predict(X, pred_leaf=True)
         df = pd.DataFrame({
@@ -433,9 +450,9 @@ def calc_coeff_var(X, y, ml_model):
         )
         df = df[['LV', 'y']].groupby('y')
         coeff_var = df.std() / df.mean()
-        metric_df['y'] = y
         metric_df['CV'] = coeff_var
     else:
+        metric_df['pred_pumping_mm'] = ml_model.predict(X)
         X['y'] = y
         metrics = ['CV', 'RMSE', 'MAE']
         for metric in metrics:
@@ -451,10 +468,9 @@ def calc_coeff_var(X, y, ml_model):
     return metric_df
 
 
-def create_cv_files(X, y, ml_model):
-    df = calc_coeff_var(X.copy(deep=True), y, ml_model)
+def create_cv_files(input_df, drop_attrs, ml_model):
+    df = calc_coeff_var(input_df.copy(deep=True), drop_attrs, ml_model)
     df.to_csv('ML_uncertainty.csv', index=False)
-
 
 
 def build_ml_model(ml_df):
@@ -483,8 +499,8 @@ def build_ml_model(ml_df):
         'pumping_net_et_sims_factor_annual',
         'pumping_net_et_geesebal_factor_annual',
         'pumping_net_et_disalexi_factor_annual',
-        #'annual_net_et_ensemble_mm',
-        'annual_net_et_ssebop_mm',
+        'annual_net_et_ensemble_mm',
+        # 'annual_net_et_ssebop_mm',
         'annual_net_et_eemetric_mm',
         'annual_net_et_pt_jpl_mm',
         'annual_net_et_sims_mm',
@@ -493,10 +509,10 @@ def build_ml_model(ml_df):
     ]
 
     # Uncomment and comment out accordingly to select the correct outlier removal factor
-    net_et_factor = 'pumping_net_et_ensemble_factor_annual'
-    # net_et_factor = 'pumping_net_et_ssebop_factor_annual'
+    # net_et_factor = 'pumping_net_et_ensemble_factor_annual'
+    net_et_factor = 'pumping_net_et_ssebop_factor_annual'
     # net_et_factor = 'pumping_net_et_eemetric_factor_annual'
-    #net_et_factor = 'pumping_net_et_pt_jpl_factor_annual'
+    # net_et_factor = 'pumping_net_et_pt_jpl_factor_annual'
     # net_et_factor = 'pumping_net_et_sims_factor_annual'
     # net_et_factor = 'pumping_net_et_geesebal_factor_annual'
     # net_et_factor = 'pumping_net_et_disalexi_factor_annual'
@@ -511,14 +527,29 @@ def build_ml_model(ml_df):
     X = dv_data.drop(columns=drop_attrs)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=random_state)
     y = ml_df['pumping_mm']
-    scoring_metrics = ['r2', 'neg_root_mean_squared_error', 'neg_mean_absolute_error']
-    model = None
+
+    scoring_metrics = {
+        'r2': 'r2',
+        'neg_root_mean_squared_error': 'neg_root_mean_squared_error',
+        'neg_root_mean_squared_error_percent': make_scorer(
+            neg_root_mean_squared_error_percent,
+            greater_is_better=False
+        ),
+        'neg_mean_absolute_error_percent': make_scorer(
+            neg_mean_absolute_error_percent,
+            greater_is_better=False
+        ),
+        'coef_var': make_scorer(
+            coef_var,
+            greater_is_better=False
+        )
+    }
     for model_name in model_dict.keys():
         print('\nSearching best params for {}...'.format(model_name))
         model = model_dict[model_name]
         model_grid = RandomizedSearchCV(
             estimator=model, param_distributions=param_dict[model_name],
-            scoring=scoring_metrics, n_jobs=-1, cv=5, refit=scoring_metrics[1],
+            scoring=scoring_metrics, n_jobs=-1, cv=5, refit=scoring_metrics['neg_root_mean_squared_error'],
             return_train_score=True, random_state=random_state
         )
         model_grid.fit(X_train, y_train)
@@ -535,17 +566,18 @@ def build_ml_model(ml_df):
         imp_df.to_csv('F_IMP.csv', index=False)
         y_pred_train = np.abs(model.predict(X_train))
         print('Training+Validation metrics...')
-        r2, mae, rmse = get_prediction_stats(y_train, y_pred_train)
-        print('R2:', r2, 'RMSE:', rmse, 'MAE:', mae)
+        r2, mae, rmse, cv = get_prediction_stats(y_train, y_pred_train)
+        print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
         y_pred_test = np.abs(model.predict(X_test))
         print('Test metrics...')
-        r2, mae, rmse = get_prediction_stats(y_test, y_pred_test)
-        print('R2:', r2, 'RMSE:', rmse, 'MAE:', mae)
+        r2, mae, rmse, cv = get_prediction_stats(y_test, y_pred_test)
+        print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
+        perm_scorer = scoring_metrics['neg_root_mean_squared_error_percent']
         train_result = permutation_importance(
-            model, X_train, y_train, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=scoring_metrics[1]
+            model, X_train, y_train, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=perm_scorer
         )
         test_results = permutation_importance(
-            model, X_test, y_test, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=scoring_metrics[1]
+            model, X_test, y_test, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=perm_scorer
         )
         sorted_importances_idx = train_result.importances_mean.argsort()
         train_importances = pd.DataFrame(
@@ -558,16 +590,20 @@ def build_ml_model(ml_df):
         )
         train_importances = train_importances[train_importances.columns[-5:]]
         test_importances = test_importances[test_importances.columns[-5:]]
+        avg_train_rmse = train_importances[train_importances.columns[-1]].mean()
+        avg_test_rmse = test_importances[test_importances.columns[-1]].mean()
+        print(f'Avg train rmse increase: {avg_train_rmse}%')
+        print(f'Avg test rmse increase: {avg_test_rmse}%')
         for name, importances in zip(["train", "test"], [train_importances, test_importances]):
             plt.figure(figsize=(10, 6))
             plt.rcParams.update({'font.size': 12})
             ax = importances.plot.box(vert=False, whis=10)
-            ax.set_xlabel("Decrease in RMSE (mm)")
+            ax.set_xlabel("Increase in RMSE (%)")
             ax.axvline(x=0, color="k", linestyle="--")
             ax.figure.tight_layout()
             plt.savefig(f'{model_name}_{name}_PI.png', dpi=400)
             plt.clf()
-    create_cv_files(X, y, model)
+    # create_cv_files(dv_data, drop_attrs, model)
 
 
 if __name__ == '__main__':
