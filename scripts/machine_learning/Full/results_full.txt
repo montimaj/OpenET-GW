@@ -1,0 +1,127 @@
+/Users/Sayantan.Majumdar@dri.edu/miniconda3/envs/openetgw/bin/python /Users/Sayantan.Majumdar@dri.edu/PycharmProjects/OpenET-GW/scripts/machine_learning/ml_comp.py
+
+Searching best params for LGBM...
+Train Results...
+R2: 0.86, RMSE: 7.98%, MAE: 5.91%, CV: 20.31%
+Validation Results...
+R2: 0.53, RMSE: 16.33%, MAE: 12.76%, CV: 18.99%
+Best params:  {'subsample': 1, 'path_smooth': 0.2, 'num_leaves': 32, 'n_estimators': 400, 'min_child_samples': 30, 'max_depth': 16, 'learning_rate': 0.01, 'colsample_bytree': 0.9, 'colsample_bynode': 1}
+                        Features    F_IMP
+24     annual_net_et_ensemble_mm  0.17667
+4            annual_et_pt_jpl_mm  0.09210
+21                 soil_depth_mm  0.06642
+18   annual_daymet_precip_eff_mm  0.05861
+23                   elevation_m  0.05638
+19                   annual_ndvi  0.05554
+5          annual_et_geesebal_mm  0.05470
+14                 annual_vs_mps  0.05303
+22            ksat_mean_micromps  0.04689
+6          annual_et_disalexi_mm  0.04326
+1            annual_et_ssebop_mm  0.04103
+2          annual_et_eemetric_mm  0.03656
+3              annual_et_sims_mm  0.03600
+9                  annual_tmmx_K  0.03238
+10                 annual_tmmn_K  0.02986
+0          annual_et_ensemble_mm  0.02177
+13                annual_vpd_kPa  0.01842
+11                 annual_eto_mm  0.01758
+16                   annual_rmin  0.01368
+7       annual_gridmet_precip_mm  0.01312
+15                   annual_rmax  0.01228
+12                 annual_etr_mm  0.01144
+8   annual_gridmet_precip_eff_mm  0.00642
+20                    eff_factor  0.00586
+17       annual_daymet_precip_mm  0.00000
+25                         HSG_1  0.00000
+26                         HSG_3  0.00000
+27                         HSG_5  0.00000
+Training+Validation metrics...
+R2: 0.79, RMSE: 11.12%, MAE: 8.46%, CV: 19.36%
+Test metrics...
+R2: 0.61, RMSE: 15.16%, MAE: 11.73%, CV: 17.64%
+Avg train rmse increase: 11.578444529296783%
+Avg test rmse increase: 9.054508005167358%
+
+Searching best params for RF...
+Train Results...
+R2: 0.81, RMSE: 10.34%, MAE: 8.25%, CV: 19.07%
+Validation Results...
+R2: 0.57, RMSE: 15.64%, MAE: 12.37%, CV: 17.86%
+Best params:  {'n_estimators': 400, 'min_samples_leaf': 2, 'max_leaf_nodes': 20, 'max_features': 12, 'max_depth': 10}
+                        Features    F_IMP
+24     annual_net_et_ensemble_mm  0.40867
+0          annual_et_ensemble_mm  0.10098
+1            annual_et_ssebop_mm  0.09483
+2          annual_et_eemetric_mm  0.06263
+5          annual_et_geesebal_mm  0.04273
+18   annual_daymet_precip_eff_mm  0.03923
+8   annual_gridmet_precip_eff_mm  0.03455
+7       annual_gridmet_precip_mm  0.03411
+16                   annual_rmin  0.01977
+10                 annual_tmmn_K  0.01969
+3              annual_et_sims_mm  0.01796
+4            annual_et_pt_jpl_mm  0.01773
+6          annual_et_disalexi_mm  0.01751
+23                   elevation_m  0.01210
+9                  annual_tmmx_K  0.01022
+15                   annual_rmax  0.01019
+19                   annual_ndvi  0.01019
+21                 soil_depth_mm  0.01013
+22            ksat_mean_micromps  0.00975
+13                annual_vpd_kPa  0.00718
+14                 annual_vs_mps  0.00684
+11                 annual_eto_mm  0.00534
+12                 annual_etr_mm  0.00420
+20                    eff_factor  0.00247
+26                         HSG_3  0.00050
+25                         HSG_1  0.00027
+27                         HSG_5  0.00024
+17       annual_daymet_precip_mm  0.00000
+Training+Validation metrics...
+R2: 0.79, RMSE: 11.15%, MAE: 8.97%, CV: 18.95%
+Test metrics...
+R2: 0.6, RMSE: 15.33%, MAE: 11.9%, CV: 17.13%
+Avg train rmse increase: 9.02369197314064%
+Avg test rmse increase: 6.727562341289859%
+
+Searching best params for ETR...
+Train Results...
+R2: 0.85, RMSE: 9.1%, MAE: 6.91%, CV: 19.43%
+Validation Results...
+R2: 0.58, RMSE: 15.43%, MAE: 11.99%, CV: 17.74%
+Best params:  {'n_estimators': 300, 'min_samples_leaf': 2, 'max_features': 20, 'max_depth': 10}
+                        Features    F_IMP
+24     annual_net_et_ensemble_mm  0.43200
+0          annual_et_ensemble_mm  0.05369
+1            annual_et_ssebop_mm  0.05337
+2          annual_et_eemetric_mm  0.04893
+5          annual_et_geesebal_mm  0.04330
+18   annual_daymet_precip_eff_mm  0.04038
+6          annual_et_disalexi_mm  0.03489
+7       annual_gridmet_precip_mm  0.03450
+8   annual_gridmet_precip_eff_mm  0.03300
+3              annual_et_sims_mm  0.02535
+4            annual_et_pt_jpl_mm  0.02360
+19                   annual_ndvi  0.02085
+22            ksat_mean_micromps  0.01985
+16                   annual_rmin  0.01611
+21                 soil_depth_mm  0.01402
+13                annual_vpd_kPa  0.01249
+15                   annual_rmax  0.01229
+11                 annual_eto_mm  0.01050
+23                   elevation_m  0.00953
+12                 annual_etr_mm  0.00950
+10                 annual_tmmn_K  0.00908
+14                 annual_vs_mps  0.00906
+20                    eff_factor  0.00875
+9                  annual_tmmx_K  0.00805
+27                         HSG_5  0.00706
+25                         HSG_1  0.00636
+26                         HSG_3  0.00348
+17       annual_daymet_precip_mm  0.00000
+Training+Validation metrics...
+R2: 0.84, RMSE: 9.82%, MAE: 7.48%, CV: 19.49%
+Test metrics...
+R2: 0.61, RMSE: 15.14%, MAE: 11.69%, CV: 17.07%
+Avg train rmse increase: 10.754038458096225%
+Avg test rmse increase: 7.393960286228902%

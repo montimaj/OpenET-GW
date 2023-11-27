@@ -9,6 +9,7 @@ import json
 import pandas as pd
 import ee
 import numpy as np
+import scipy as scp
 import swifter
 import matplotlib.pyplot as plt
 from lightgbm import LGBMRegressor
@@ -248,12 +249,23 @@ def prepare_ml_data():
     return pd.read_csv(final_csv)
 
 
+def correct_hsg(unique_hsgs, hsg):
+    if hsg in unique_hsgs:
+        return hsg
+    hsg_list = []
+    for val in hsg:
+        hsg_list.append(int(val))
+    return str(scp.stats.mode(hsg_list).mode)
+
+
+
 def process_dv_data(ml_data_df):
     year_list = [2018, 2019, 2020, 2021, 2022]
     join_table = pd.read_csv('../joined_data/dv_field_pou_id_join.csv')
 
     # Read ET and Pumping tables
     # ET table
+    ml_data_df['HSG'] = ml_data_df['HSG'].astype(int).astype(str)
     et_df = ml_data_df
     pumping_df = pd.read_csv(
         '../pumping_data/diamond_valley/Diamond Valley Data for Meters Database Pumpage Report.csv')
@@ -331,6 +343,8 @@ def process_dv_data(ml_data_df):
             dict_list.append(et_dict)
 
     final_df = pd.DataFrame(dict_list)
+    unique_hsgs = ml_data_df.HSG.unique()
+    final_df['HSG'] = final_df['HSG'].apply(lambda x: correct_hsg(unique_hsgs, x))
 
     # Build addictional units
     final_df['pumping_mm'] = final_df['pumping_m3'] / final_df['area_m2'] * 1000
@@ -367,12 +381,12 @@ def get_model_param_dict(random_state=0):
     }
 
     param_dict = {'LGBM': {
-        'n_estimators': [300, 400, 500],
+        'n_estimators': [300, 400, 500, 800],
         'max_depth': [16, 20, -1],
-        'learning_rate': [0.01, 0.05],
+        'learning_rate': [0.01, 0.005, 0.05],
         'subsample': [1, 0.9],
-        'colsample_bytree': [1, 0.9, 0.8],
-        'colsample_bynode': [1, 0.9, 0.8],
+        'colsample_bytree': [1, 0.9],
+        'colsample_bynode': [1, 0.9],
         'path_smooth': [0, 0.1, 0.2],
         'num_leaves': [31, 32],
         'min_child_samples': [30, 40, 10]
@@ -380,7 +394,7 @@ def get_model_param_dict(random_state=0):
         'n_estimators': [300, 400, 500],
         'max_features': [5, 6, 7, 10, 12, 20, 30, None],
         'max_depth': [8, 15, 20, 6, 10, None],
-        'max_leaf_nodes': [16, 20],
+        'max_leaf_nodes': [16, 20, None],
         'min_samples_leaf': [1, 2]
     }, 'ETR': {
         'n_estimators': [300, 400, 500],
@@ -500,17 +514,31 @@ def build_ml_model(ml_df):
         'pumping_net_et_geesebal_factor_annual',
         'pumping_net_et_disalexi_factor_annual',
         'annual_net_et_ensemble_mm',
-        # 'annual_net_et_ssebop_mm',
+        'annual_net_et_ssebop_mm',
         'annual_net_et_eemetric_mm',
         'annual_net_et_pt_jpl_mm',
         'annual_net_et_sims_mm',
         'annual_net_et_geesebal_mm',
-        'annual_net_et_disalexi_mm'
+        #'annual_net_et_disalexi_mm',
+        'annual_et_ensemble_mm',
+        'annual_et_ssebop_mm',
+        'annual_et_eemetric_mm',
+        'annual_et_pt_jpl_mm',
+        'annual_et_sims_mm',
+        'annual_et_geesebal_mm',
+        #'annual_et_disalexi_mm',
+        'annual_et_ensemble_m3',
+        'annual_et_ssebop_m3',
+        'annual_et_eemetric_m3',
+        'annual_et_pt_jpl_m3',
+        'annual_et_sims_m3',
+        'annual_et_geesebal_m3',
+        'annual_et_disalexi_m3'
     ]
 
     # Uncomment and comment out accordingly to select the correct outlier removal factor
-    # net_et_factor = 'pumping_net_et_ensemble_factor_annual'
-    net_et_factor = 'pumping_net_et_ssebop_factor_annual'
+    net_et_factor = 'pumping_net_et_ensemble_factor_annual'
+    # net_et_factor = 'pumping_net_et_ssebop_factor_annual'
     # net_et_factor = 'pumping_net_et_eemetric_factor_annual'
     # net_et_factor = 'pumping_net_et_pt_jpl_factor_annual'
     # net_et_factor = 'pumping_net_et_sims_factor_annual'
@@ -526,7 +554,6 @@ def build_ml_model(ml_df):
     y = dv_data['pumping_mm']
     X = dv_data.drop(columns=drop_attrs)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=random_state)
-    y = ml_df['pumping_mm']
 
     scoring_metrics = {
         'r2': 'r2',

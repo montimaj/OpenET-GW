@@ -23,7 +23,7 @@ def build_linear_regression():
     metrics_df = pd.DataFrame()
 
     for et_var, et_name in et_vars.items():
-        net_et_factor = f'pumping_net_et_{et_var}_factor_annual'
+        net_et_factor = f'pumping_net_et_ensemble_factor_annual'
         data_column = f'annual_net_et_{et_var}_mm'
         df = pd.read_csv('../machine_learning/dv_joined_ml_pumping_data.csv')
         dv_data = df.loc[df[net_et_factor] < 1.5, :]
@@ -101,7 +101,10 @@ def build_linear_regression():
         sns.lineplot(x=[0, new_X.max()], y=[0, new_X.max()], label='1:1 Line')
         sns.lineplot(x=new_X, y=final_slope * new_X, label="Linear Regression")
         sns.scatterplot(data=dv_data, x=data_column, y='pumping_mm', label='Meter Data', s=35, marker="o")
-        sns.set(style="white")
+        sns.set_style('white', rc={
+            'xtick.bottom': True,
+            'ytick.left': True,
+        })
 
         # Add text
         plt.text(800, 100,
@@ -130,8 +133,7 @@ def build_linear_regression():
         plt.ylim(-5, 1200)
         plt.xlim(-5, 1200)
 
-        plt.savefig(f"dv_model_scatter_plot_{et_var}.png", dpi=400)
-        plt.clf()
+        plt.savefig(f"dv_model_scatter_plot_{et_var}.png", dpi=400, bbox_inches='tight')
 
     metrics_df.to_csv('LM_ET_Comparison.csv', index=False)
 
