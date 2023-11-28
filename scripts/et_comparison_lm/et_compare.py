@@ -1,9 +1,8 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import numpy as np
 
-def compare_dv():
+def compare_et(site='dv'):
     et_data_dict= {
         'ensemble': 'OpenET ensemble',
         'disalexi': 'ALEXI/disALEXI',
@@ -13,8 +12,10 @@ def compare_dv():
         'sims': 'SIMS',
         'ssebop': 'SSEBop'
     }
-    df = pd.read_csv('../machine_learning/dv_joined_ml_pumping_data.csv')
+    df = pd.read_csv(f'../machine_learning/{site}_joined_ml_pumping_data.csv')
     net_et_factor = 'pumping_net_et_ensemble_factor_annual'
+    if site == 'hb':
+        df = df[~df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])]
     et_df_all = df[df[net_et_factor] < 1.5]
     et_df_all = et_df_all[et_df_all[net_et_factor] > 0.5]
     et_df_all = et_df_all[et_df_all["pumping_mm"] > 0]
@@ -40,7 +41,7 @@ def compare_dv():
         y='Total actual ET depth (mm)',
         hue='ET model'
     )
-    plt.savefig('dv_et_comp_plot.png', bbox_inches='tight', dpi=400)
+    plt.savefig(f'{site}_et_comp_plot.png', bbox_inches='tight', dpi=400)
 
     et_cols = [f'annual_net_et_{et_data}_mm' for et_data in et_data_dict.keys()]
     new_et_dict = {}
@@ -62,10 +63,11 @@ def compare_dv():
         y='Total depth (mm)',
         hue='Net ET or GP'
     )
-    plt.savefig('dv_net_et_comp_plot.png', bbox_inches='tight', dpi=400)
+    plt.savefig(f'{site}_net_et_comp_plot.png', bbox_inches='tight', dpi=400)
 
 
 
 
 if __name__ == '__main__':
-    compare_dv()
+    compare_et(site='dv')
+    compare_et(site='hb')

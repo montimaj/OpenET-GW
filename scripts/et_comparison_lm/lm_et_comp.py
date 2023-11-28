@@ -1,5 +1,4 @@
 import seaborn as sns
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import warnings
@@ -10,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from matplotlib import pyplot as plt
 
 
-def build_linear_regression():
+def build_linear_regression(site='dv'):
     et_vars = {
         'ensemble': 'OpenET Ensemble',
         'ssebop': 'SSEBop',
@@ -23,16 +22,18 @@ def build_linear_regression():
     metrics_df = pd.DataFrame()
 
     for et_var, et_name in et_vars.items():
-        net_et_factor = f'pumping_net_et_ensemble_factor_annual'
+        net_et_factor = 'pumping_net_et_ensemble_factor_annual'
         data_column = f'annual_net_et_{et_var}_mm'
-        df = pd.read_csv('../machine_learning/dv_joined_ml_pumping_data.csv')
-        dv_data = df.loc[df[net_et_factor] < 1.5, :]
-        dv_data = dv_data.loc[dv_data[net_et_factor] > 0.5, :]
-        dv_data = dv_data[dv_data["pumping_mm"] > 0]
+        df = pd.read_csv(f'../machine_learning/{site}_joined_ml_pumping_data.csv')
+        if site == 'hb':
+            df = df[~df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])]
+        df = df[df[net_et_factor] < 1.5]
+        df = df[df[net_et_factor] > 0.5]
+        df = df[df["pumping_mm"] > 0]
 
         # Separeate X and y data
-        X = np.array(dv_data.loc[:, data_column])  # Independent variable
-        y = np.array(dv_data.loc[:, "pumping_mm"])  # Dependent variable
+        X = np.array(df.loc[:, data_column])  # Independent variable
+        y = np.array(df.loc[:, "pumping_mm"])  # Dependent variable
         # Number of bootstrap samples
         n_samples = 10000
 
@@ -100,7 +101,7 @@ def build_linear_regression():
         # Add data
         sns.lineplot(x=[0, new_X.max()], y=[0, new_X.max()], label='1:1 Line')
         sns.lineplot(x=new_X, y=final_slope * new_X, label="Linear Regression")
-        sns.scatterplot(data=dv_data, x=data_column, y='pumping_mm', label='Meter Data', s=35, marker="o")
+        sns.scatterplot(data=df, x=data_column, y='pumping_mm', label='Meter Data', s=35, marker="o")
         sns.set_style('white', rc={
             'xtick.bottom': True,
             'ytick.left': True,
@@ -133,11 +134,11 @@ def build_linear_regression():
         plt.ylim(-5, 1200)
         plt.xlim(-5, 1200)
 
-        plt.savefig(f"dv_model_scatter_plot_{et_var}.png", dpi=400, bbox_inches='tight')
+        plt.savefig(f"{site}_model_scatter_plot_{et_var}.png", dpi=400, bbox_inches='tight')
 
-    metrics_df.to_csv('LM_ET_Comparison.csv', index=False)
+    metrics_df.to_csv(f'LM_ET_Comparison_{site}.csv', index=False)
 
 
 if __name__ == '__main__':
-    build_linear_regression()
-    # TODO: HB, Oregon LM ET comparison
+    build_linear_regression(site='dv')
+    build_linear_regression(site='hb')
