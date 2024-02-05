@@ -51,7 +51,7 @@ state, and water budget assessments in priority basins.
 
 ## Acknowledgments
 
-We would like to express our gratitude for the support received from the State of Nevada / U.S. Department of Treasury (grant number 27042), United States Geological Survey (USGS) NASA Landsat Science Team (grant number 140G0118C0007), USGS Water Resources Research Institute (grant G22AC00584-00), Desert Research Institute Maki Endowment, and Windward Fund. 
+We would like to express our gratitude for the support received from the State of Nevada / U.S. Department of the Treasury (grant number 27042), United States Geological Survey (USGS) NASA Landsat Science Team (grant number 140G0118C0007), USGS Water Resources Research Institute (grant G22AC00584-00), Desert Research Institute Maki Endowment, and Windward Fund. 
 Our appreciation extends to the open-source software and data communities for their generosity in making their resources available to the public. 
 We also acknowledge the invaluable contribution of the [OpenET consortium](https://openetdata.org/) and respective funding partners, [Google Earth Engine](https://earthengine.google.com/), [Nevada Division of Water Resources](http://water.nv.gov/), and the [Oregon Water Resources Department](https://www.oregon.gov/owrd/pages/index.aspx) for providing the necessary computational resources and datasets pertaining to ET, groundwater pumping, places of use, and other shapefiles used in this research. 
 We also extend our gratitude to [Dr. Richard G. Niswonger](https://www.usgs.gov/staff-profiles/richard-g-niswonger) (USGS) for his helpful suggestions on handling discrepancies in the metered pumping data and to Marty Plaskett and Mark Moyle (Diamond Valley farmers) for their interest and support in our efforts. 
