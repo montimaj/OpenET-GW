@@ -1,4 +1,4 @@
-## Toward Sustainable Groundwater Management: Harnessing Remote Sensing and Climate Data to Estimate Field-Scale Groundwater Pumping and Irrigation Efficiencies
+## Toward Sustainable Groundwater Management: Harnessing Remote Sensing and Climate Data to Estimate Field-Scale Groundwater Pumping
 
 ### PI: [Justin Huntington](https://www.dri.edu/directory/justin-huntington/)
 ### Software authors/maintainers: [Thomas Ott](https://www.dri.edu/directory/thomas-ott/), [Sayantan Majumdar](https://www.dri.edu/directory/sayantan-majumdar/)
@@ -8,11 +8,11 @@
 This software has been successfully tested on the [Apple MacBook Pro 2023](https://www.apple.com/macbook-pro/) (macOS Ventura 13.6.2) and on standard Windows 11 laptop/desktops.
 
 ## Citations
-**Journal**: [Ott, T.J.](https://www.dri.edu/directory/thomas-ott/), [Huntington, J.L.](https://www.dri.edu/directory/justin-huntington/), 
+**Journal**: [Ott, T.J.](https://www.dri.edu/directory/thomas-ott/), [Majumdar, S.](https://www.dri.edu/directory/sayantan-majumdar/), [Huntington, J.L.](https://www.dri.edu/directory/justin-huntington/), 
 [Pearson, C.](https://www.dri.edu/directory/chris-pearson/), [Bromley, M.](https://www.dri.edu/directory/matthew-bromley/), 
 [Minor, B.A.](https://www.dri.edu/directory/blake-minor/), [Morton, C.G.](https://www.dri.edu/directory/charles-morton/), 
-[Sueki, S.](https://www.dri.edu/directory/sachiko-sueki/), [Beamer, J.P.](https://www.linkedin.com/in/jordan-beamer-89ba8020/), 
-[Jasoni, R.](https://www.dri.edu/directory/richard-jasoni/), and [Majumdar, S.](https://www.dri.edu/directory/sayantan-majumdar/) (2024). 
+[Sueki, S.](https://www.dri.edu/directory/sachiko-sueki/), [Beamer, J.P.](https://www.linkedin.com/in/jordan-beamer-89ba8020/), & 
+[Jasoni, R.](https://www.dri.edu/directory/richard-jasoni/) (2024). 
 Toward Sustainable Groundwater Management: Harnessing Remote Sensing and Climate Data to Estimate Field-Scale Groundwater Pumping and Irrigation Efficiencies. _Submitted to Elsevier [Agricultural Water Management](https://www.sciencedirect.com/journal/agricultural-water-management) special issue on _Irrigation monitoring through Earth Observation (EO) data__.
 
 

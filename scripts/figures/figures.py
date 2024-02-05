@@ -119,8 +119,8 @@ warnings.filterwarnings("ignore")
 # plt.yticks(fontsize=18)
 
 # # Set limit
-# plt.ylim(-100, 2800) 
-# # plt.xlim(-100, 2800) 
+# plt.ylim(-100, 2800)
+# # plt.xlim(-100, 2800)
 
 
 # # Adding a legend with larger fonts
@@ -242,7 +242,7 @@ plt.yticks(fontsize=16)
 
 plt.xlabel("Net ET depth (mm)", fontsize=18)
 plt.ylabel("GP depth (mm)", fontsize=18)
-# plt.title("Diamond Valley", fontsize=20)
+plt.title("Diamond Valley Depths", fontsize=20)
 
 plt.ylim(-5, 1200)
 plt.xlim(-5, 1200)
@@ -355,7 +355,7 @@ plt.yticks(fontsize=16)
 
 plt.xlabel("Net ET volume (millions of m$^3$)", fontsize=18)
 plt.ylabel("GP volume (millions of m$^3$)", fontsize=18)
-# plt.title("Diamond Valley", fontsize=20)
+plt.title("Diamond Valley Volumes", fontsize=20)
 
 plt.ylim(-0.1, 1.75)
 plt.xlim(-0.1, 1.75)
@@ -633,7 +633,7 @@ ax.bar_label(ax.containers[1], fmt='%.1f')
 # Set plot labels and title
 plt.xlabel('Year')
 plt.ylabel('GP volume (Mm$^3$)')
-# plt.title('Total Pumping vs Modeled Pumping Diamond Valley')
+plt.title('Total vs Modeled Withdrawals Diamond Valley')
 
 plt.ylim(0, 95)
 
@@ -738,7 +738,7 @@ plt.savefig('with_lower_filter/dv_bar_plot.png', bbox_inches='tight', dpi=400)
 
 # data_df = df.loc[(df['pumping_net_et_factor_annual']<1.5) &
 #                   (df['pumping_net_et_factor_annual']>0.5) &
-#                   (df["pumping_mm"] > 0) & 
+#                   (df["pumping_mm"] > 0) &
 #                   (~df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])), :]
 
 # plt.figure(figsize=(8, 8))
@@ -764,8 +764,8 @@ plt.savefig('with_lower_filter/dv_bar_plot.png', bbox_inches='tight', dpi=400)
 # plt.yticks(fontsize=18)
 
 # # Set limit
-# plt.ylim(-30, 2400) 
-# plt.xlim(0, 800) 
+# plt.ylim(-30, 2400)
+# plt.xlim(0, 800)
 
 # # Adding a legend with larger fonts
 # plt.legend(fontsize=16, loc='upper left')
@@ -887,7 +887,7 @@ plt.yticks(fontsize=16)
 
 plt.xlabel("Net ET depth (mm)", fontsize=18)
 plt.ylabel("GP depth (mm)", fontsize=18)
-# plt.title("Harney Basin", fontsize=20)
+plt.title("Harney Basin Depths", fontsize=20)
 
 plt.ylim(-10, 1200)
 plt.xlim(-10, 1200)
@@ -981,6 +981,7 @@ cv = np.std(prediction_y) * 100 / np.mean(prediction_y)
 # Build Figure
 plt.figure(figsize=(8, 8))
 
+
 # Add data
 sns.lineplot(x=[0, new_X.max()], y= [0,new_X.max()], label='1:1 Line')
 sns.lineplot(x=new_X,y=final_slope*new_X,label="Linear Regression")
@@ -1001,7 +1002,7 @@ plt.yticks(fontsize=16)
 
 plt.xlabel("Net ET volume (millions of m$^3$)", fontsize=18)
 plt.ylabel("GP volume (millions of m$^3$)", fontsize=18)
-# plt.title("Harney Basin", fontsize=20)
+plt.title("Harney Basin Volumes", fontsize=20)
 
 plt.ylim(-0.01, 0.9)
 plt.xlim(-0.01, 0.9)
@@ -1251,7 +1252,7 @@ df = pd.DataFrame(data)
 # Create a barplot using Seaborn
 plt.figure(figsize=(10, 6))
 plt.rcParams.update({'font.size': 12})
-
+sns.set_theme(style="whitegrid")
 # Replace 'Value' and 'Category' with your actual column names
 ax = sns.barplot(data=df, x='Year', y='Value', hue='Category')
 
@@ -1261,7 +1262,7 @@ ax.bar_label(ax.containers[1], fmt='%.1f')
 # Set plot labels and title
 plt.xlabel('Year')
 plt.ylabel('GP volume (Mm$^3$)')
-# plt.title('Total Pumping vs Modeled Pumping Harney Basin')
+plt.title('Total vs Modeled Withdrawals Harney Basin')
 
 plt.ylim(0, 5)
 
