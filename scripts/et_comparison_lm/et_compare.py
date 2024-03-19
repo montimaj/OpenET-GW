@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def compare_et(site='dv', unit='mm'):
+def compare_et(site='dv', unit='mm', plot_title=False):
     et_data_dict= {
         'ensemble': 'OpenET ensemble',
         'disalexi': 'ALEXI/disALEXI',
@@ -12,12 +12,15 @@ def compare_et(site='dv', unit='mm'):
         'sims': 'SIMS',
         'ssebop': 'SSEBop'
     }
+    site_name = 'Diamond Valley, NV'
+    if site == 'hb':
+        site_name = 'Harney Basin, OR'
     df = pd.read_csv(f'../machine_learning/{site}_joined_ml_pumping_data.csv')
     net_et_factor = 'pumping_net_et_ensemble_factor_annual'
     if site == 'hb':
         df = df[~df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])]
     et_df_all = df[df[net_et_factor] < 1.5]
-    et_df_all = et_df_all[et_df_all[net_et_factor] > 0.5]
+    et_df_all = et_df_all[et_df_all[net_et_factor] > 0.7]
     et_df_all = et_df_all[et_df_all["pumping_mm"] > 0]
     et_df_all = et_df_all.rename(columns={'year': 'Year', 'pumping_mm': 'GP'})
     et_cols = [f'annual_et_{et_data}_mm' for et_data in et_data_dict.keys()]
@@ -50,16 +53,30 @@ def compare_et(site='dv', unit='mm'):
     area_weight_et_df.to_csv(f'Area_Weighted_ET_{unit}.csv', index=False)
 
 
-    plt.figure(figsize=(15, 7))
-    plt.rcParams.update({'font.size': 12})
+    plt.figure(figsize=(25, 13))
+    plt.rcParams.update({'font.size': 32})
     plt.ticklabel_format(style='sci', axis='y')
-    sns.pointplot(
-        data=area_weight_et_df,
+    with plt.rc_context({'lines.linewidth': 3}):
+        sns.pointplot(
+            data=area_weight_et_df[area_weight_et_df['ET model'] == 'OpenET ensemble'],
+            x='Year',
+            y=f'Area-weighted mean actual ET depth ({unit})',
+            hue='ET model',
+            palette='dark:black'
+        )
+    ax = sns.pointplot(
+        data=area_weight_et_df[area_weight_et_df['ET model'] != 'OpenET ensemble'],
         x='Year',
         y=f'Area-weighted mean actual ET depth ({unit})',
-        hue='ET model'
+        hue='ET model',
+
     )
-    plt.savefig(f'{site}_et_comp_plot_{unit}.png', bbox_inches='tight', dpi=400)
+    ax.legend(loc='upper left', bbox_to_anchor=(0.008, 0.975), ncol=2, framealpha=0.2, fontsize=24).get_texts()[0].set_fontweight('bold')
+    if plot_title:
+        plt.title(f'ET comparison in {site_name}')
+    plt.xticks(fontsize=32)
+    plt.yticks(fontsize=32)
+    plt.savefig(f'{site}_et_comp_plot_{unit}.png', bbox_inches='tight', dpi=600)
 
     et_cols = [f'annual_net_et_{et_data}_mm' for et_data in et_data_dict.keys()]
     new_et_dict = {}
@@ -87,17 +104,40 @@ def compare_et(site='dv', unit='mm'):
     area_weight_net_et_df['Mean depth (ft)'] = area_weight_net_et_df['Mean depth (mm)'] / factor
     area_weight_net_et_df.to_csv('Area_Weighted_Net_ET_{unit}.csv', index=False)
 
-    plt.figure(figsize=(25, 12))
-    plt.rcParams.update({'font.size': 24})
+    plt.figure(figsize=(25, 13))
+    plt.rcParams.update({'font.size': 32})
     plt.ticklabel_format(style='sci', axis='y')
+    with plt.rc_context({'lines.linewidth': 3}):
+        ax = sns.pointplot(
+            data=area_weight_net_et_df[area_weight_net_et_df['Net ET or GP'] == 'OpenET ensemble'],
+            x='Year',
+            y=f'Area-weighted mean depth ({unit})',
+            hue='Net ET or GP',
+            palette='dark:black'
+        )
+    with plt.rc_context({'lines.linewidth': 3}):
+        ax= sns.pointplot(
+            data=area_weight_net_et_df[area_weight_net_et_df['Net ET or GP'] == 'GP'],
+            x='Year',
+            y=f'Area-weighted mean depth ({unit})',
+            hue='Net ET or GP',
+            palette=sns.color_palette("blend:#7AB,#EDA", n_colors=1),
+            linestyles=['--']
+        )
     ax = sns.pointplot(
-        data=area_weight_net_et_df,
+        data=area_weight_net_et_df[~area_weight_net_et_df['Net ET or GP'].isin(['OpenET ensemble', 'GP'])],
         x='Year',
         y=f'Area-weighted mean depth ({unit})',
         hue='Net ET or GP'
     )
-    ax.legend(loc='upper left', ncol=2, title='Net ET or GP')
-    plt.savefig(f'{site}_net_et_comp_plot_{unit}.png', bbox_inches='tight', dpi=400)
+    ax.legend(
+        loc='upper left', bbox_to_anchor=(0, 0.975), ncol=2, title='Net ET or GP', framealpha=0.2, fontsize=24
+    ).get_texts()[0].set_fontweight('bold')
+    if plot_title:
+        plt.title(f'Net ET and GP comparison in {site_name}')
+    plt.xticks(fontsize=32)
+    plt.yticks(fontsize=32)
+    plt.savefig(f'{site}_net_et_comp_plot_{unit}.png', bbox_inches='tight', dpi=600)
     plt.clf()
 
     # area_weight_net_et_df = area_weight_net_et_df[area_weight_net_et_df['Net ET or GP'] != 'GP']
@@ -118,5 +158,5 @@ def compare_et(site='dv', unit='mm'):
 
 
 if __name__ == '__main__':
-    compare_et(site='dv')
-    compare_et(site='hb')
+    compare_et(site='dv', unit='mm')
+    compare_et(site='hb', unit='mm')

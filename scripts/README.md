@@ -64,9 +64,6 @@ may be required for this GEE authentication step. Refer to the installation docs
 From the Linux/Mac terminal or Windows PowerShell:
 1. Make sure that the `openetgw` conda environment is active. If not, run ```conda activate openetgw``` before running the following codes.
 2. Enter any of the `scripts` directory, e.g., `scripts/figures/`
-3. Run `python figures.py` to generate all the figures shown in Ott et al. (2024)
+3. Run `python dv_figures.py` to generate the DV figures shown in Ott et al. (2024)
 
-#### Possible API issues
-It is possible that the `earthengine-api` and `gcloud` versions might lead to "Not signed up for Earth Engine" error. In this case, 
-we recommend using earthengine-api=0.1.357 and gcloud version 453.0.0.
 

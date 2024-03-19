@@ -393,7 +393,11 @@ def process_hb_data(ml_data_df):
     final_df.to_csv('hb_joined_ml_pumping_data.csv', index=False)
     return final_df
 
+
 def process_dv_data(ml_data_df):
+    final_csv = 'dv_joined_ml_pumping_data.csv'
+    if os.path.exists(final_csv):
+        return pd.read_csv(final_csv)
     year_list = [2018, 2019, 2020, 2021, 2022]
     join_table = pd.read_csv('../joined_data/dv_field_pou_id_join.csv')
 
@@ -501,7 +505,7 @@ def process_dv_data(ml_data_df):
     ]
     for pred_col in pred_cols:
         final_df[pred_col] /= final_df['num_fields']
-    final_df.to_csv('dv_joined_ml_pumping_data.csv', index=False)
+    final_df.to_csv(final_csv, index=False)
     return final_df
 
 
@@ -558,19 +562,19 @@ def get_model_param_dict(random_state=0):
     return model_dict, param_dict
 
 
-def get_grid_search_stats(gs_model):
+def get_grid_search_stats(gs_model, precision=2):
     scores = gs_model.cv_results_
     print('Train Results...')
-    r2 = np.round(scores['mean_train_r2'].mean(), 2)
-    rmse = np.round(-scores['mean_train_neg_root_mean_squared_error_percent'].mean(), 2)
-    mae = np.round(-scores['mean_train_neg_mean_absolute_error_percent'].mean(), 2)
-    cv = np.round(-scores['mean_train_coef_var'].mean(), 2)
+    r2 = np.round(scores['mean_train_r2'].mean(), 3)
+    rmse = np.round(-scores['mean_train_neg_root_mean_squared_error_percent'].mean(), precision)
+    mae = np.round(-scores['mean_train_neg_mean_absolute_error_percent'].mean(), precision)
+    cv = np.round(-scores['mean_train_coef_var'].mean(), precision)
     print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
     print('Validation Results...')
-    r2 = np.round(scores['mean_test_r2'].mean(), 2)
-    rmse = np.round(-scores['mean_test_neg_root_mean_squared_error_percent'].mean(), 2)
-    mae = np.round(-scores['mean_test_neg_mean_absolute_error_percent'].mean(), 2)
-    cv = np.round(-scores['mean_test_coef_var'].mean(), 2)
+    r2 = np.round(scores['mean_test_r2'].mean(), 3)
+    rmse = np.round(-scores['mean_test_neg_root_mean_squared_error_percent'].mean(), precision)
+    mae = np.round(-scores['mean_test_neg_mean_absolute_error_percent'].mean(), precision)
+    cv = np.round(-scores['mean_test_coef_var'].mean(), precision)
     print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
 
 
@@ -578,7 +582,7 @@ def get_prediction_stats(actual_values, pred_values, precision=2):
     r2, mae, rmse, cv = (np.nan,) * 4
     mean_actual = np.mean(actual_values)
     if actual_values.size and pred_values.size:
-        r2 = np.round(r2_score(actual_values, pred_values), precision)
+        r2 = np.round(r2_score(actual_values, pred_values), 3)
         mae = np.round(mean_absolute_error(actual_values, pred_values) * 100 / mean_actual, precision)
         rmse = np.round(mean_squared_error(actual_values, pred_values, squared=False) * 100 / mean_actual, precision)
         cv = np.round(np.std(pred_values) / np.mean(pred_values) * 100, precision)
@@ -640,6 +644,55 @@ def create_cv_files(input_df, drop_attrs, ml_model):
     df.to_csv('ML_uncertainty.csv', index=False)
 
 
+def build_outlier_interval_dict(make_plots=False):
+    et_vars = {
+        'ensemble': 'OpenET Ensemble',
+        'ssebop': 'SSEBop',
+        'eemetric': 'eeMETRIC',
+        'pt_jpl': 'PT-JPL',
+        'sims': 'SIMS',
+        'geesebal': 'geeSEBAL',
+        'disalexi': 'ALEXI/DisALEXI'
+    }
+    interval_dict = {}
+    dv_df = pd.read_csv(f'../machine_learning/dv_joined_ml_pumping_data.csv')
+    # dv_df = pd.read_csv(f'../machine_learning/hb_joined_ml_pumping_data.csv')
+    # dv_df = dv_df[~dv_df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])]
+    dv_df = dv_df[dv_df.pumping_mm > 0]
+    years = range(2018, 2023)
+    for et_var, et_name in et_vars.items():
+        net_et_factor = f'pumping_net_et_{et_var}_factor_annual'
+        ll_dict = {}
+        ul_dict = {}
+        limit_df = pd.DataFrame()
+        for year in years:
+            yearly_df = dv_df[dv_df.year == year]
+            if et_var == 'ensemble':
+                print(year, yearly_df.shape[0])
+
+            q1 = np.percentile(yearly_df[net_et_factor], 25)
+            q3 = np.percentile(yearly_df[net_et_factor], 75)
+            iqr = q3 - q1
+            ll = q1 - 1.5 * iqr
+            if ll < 0:
+                ll = np.min(yearly_df[net_et_factor])
+            ul = q3 + 1.5 * iqr
+            ll_dict[year] = np.round(ll, 2)
+            ul_dict[year] = np.round(ul, 2)
+            l_df = pd.DataFrame(data={
+                'Year': [str(year)],
+                'Lower limit': [ll_dict[year]],
+                'Upper limit': [ul_dict[year]]
+            })
+            limit_df = pd.concat([limit_df, l_df])
+        median_year = np.median(years)
+        ll = ll_dict[median_year]
+        ul = ul_dict[median_year]
+        interval_dict[et_var] = (ll, ul)
+    return interval_dict
+
+
+
 def build_ml_model(ml_df, site='dv'):
     random_state = 1234
     drop_attr_dict = {
@@ -684,20 +737,20 @@ def build_ml_model(ml_df, site='dv'):
         'pumping_net_et_sims_factor_annual',
         'pumping_net_et_geesebal_factor_annual',
         'pumping_net_et_disalexi_factor_annual',
-        #'annual_net_et_ensemble_mm',
+        'annual_net_et_ensemble_mm',
         'annual_net_et_ssebop_mm',
         'annual_net_et_eemetric_mm',
         'annual_net_et_pt_jpl_mm',
         'annual_net_et_sims_mm',
         'annual_net_et_geesebal_mm',
-        'annual_net_et_disalexi_mm',
-        # 'annual_et_ensemble_mm',
-        # 'annual_et_ssebop_mm',
-        # 'annual_et_eemetric_mm',
-        # 'annual_et_pt_jpl_mm',
-        # 'annual_et_sims_mm',
-        # 'annual_et_geesebal_mm',
-        # 'annual_et_disalexi_mm'
+        #'annual_net_et_disalexi_mm',
+        'annual_et_ensemble_mm',
+        'annual_et_ssebop_mm',
+        'annual_et_eemetric_mm',
+        'annual_et_pt_jpl_mm',
+        'annual_et_sims_mm',
+        'annual_et_geesebal_mm',
+        #'annual_et_disalexi_mm'
     ]
 
     # Uncomment and comment out accordingly to select the correct outlier removal factor
@@ -713,12 +766,24 @@ def build_ml_model(ml_df, site='dv'):
     model_dict, param_dict = get_model_param_dict(random_state)
     if site == 'hb':
         ml_df = ml_df[~ml_df.fid.isin(['15', '533_1102', '1210_1211', '1329', '1539_1549_1550', '1692'])]
-    ml_df = ml_df[ml_df[net_et_factor] < 1.5]
-    ml_df = ml_df[ml_df[net_et_factor] > 0.5]
+    interval_dict = build_outlier_interval_dict()
+    # Uncomment and comment out accordingly to select the correct outlier removal factor
+    ll, ul = interval_dict['ensemble']
+    # ll, ul = interval_dict['ssebop']
+    # ll, ul = interval_dict['eemetric']
+    # ll, ul = interval_dict['pt_jpl']
+    # ll, ul = interval_dict['sims']
+    # ll, ul = interval_dict['geesebal']
+    # ll, ul = interval_dict['disalexi']
+
+    print(ll, ul)
+    ml_df = ml_df[ml_df[net_et_factor] < ul]
+    ml_df = ml_df[ml_df[net_et_factor] > ll]
     ml_df = ml_df[ml_df["pumping_mm"] > 0]
     dv_data = pd.get_dummies(ml_df, columns=['HSG'])
     y = dv_data['pumping_mm']
     X = dv_data.drop(columns=drop_attrs)
+    print('Num predictors:', X.shape[1])
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=random_state)
 
     scoring_metrics = {
@@ -765,37 +830,37 @@ def build_ml_model(ml_df, site='dv'):
         print('Test metrics...')
         r2, mae, rmse, cv = get_prediction_stats(y_test, y_pred_test)
         print(f'R2: {r2}, RMSE: {rmse}%, MAE: {mae}%, CV: {cv}%')
-        perm_scorer = scoring_metrics['neg_root_mean_squared_error_percent']
-        train_result = permutation_importance(
-            model, X_train, y_train, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=perm_scorer
-        )
-        test_results = permutation_importance(
-            model, X_test, y_test, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=perm_scorer
-        )
-        sorted_importances_idx = train_result.importances_mean.argsort()
-        train_importances = pd.DataFrame(
-            train_result.importances[sorted_importances_idx].T,
-            columns=X.columns[sorted_importances_idx],
-        )
-        test_importances = pd.DataFrame(
-            test_results.importances[sorted_importances_idx].T,
-            columns=X.columns[sorted_importances_idx],
-        )
-        train_importances = train_importances[train_importances.columns[-5:]]
-        test_importances = test_importances[test_importances.columns[-5:]]
-        avg_train_rmse = train_importances[train_importances.columns[-1]].mean()
-        avg_test_rmse = test_importances[test_importances.columns[-1]].mean()
-        print(f'Avg train rmse increase: {avg_train_rmse}%')
-        print(f'Avg test rmse increase: {avg_test_rmse}%')
-        for name, importances in zip(["train", "test"], [train_importances, test_importances]):
-            plt.figure(figsize=(10, 6))
-            plt.rcParams.update({'font.size': 12})
-            ax = importances.plot.box(vert=False, whis=10)
-            ax.set_xlabel("Increase in RMSE (%)")
-            ax.axvline(x=0, color="k", linestyle="--")
-            ax.figure.tight_layout()
-            plt.savefig(f'{model_name}_{name}_PI_{site}.png', dpi=400)
-            plt.clf()
+        # perm_scorer = scoring_metrics['neg_root_mean_squared_error_percent']
+        # train_result = permutation_importance(
+        #     model, X_train, y_train, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=perm_scorer
+        # )
+        # test_results = permutation_importance(
+        #     model, X_test, y_test, n_repeats=10, random_state=random_state, n_jobs=-1, scoring=perm_scorer
+        # )
+        # sorted_importances_idx = train_result.importances_mean.argsort()
+        # train_importances = pd.DataFrame(
+        #     train_result.importances[sorted_importances_idx].T,
+        #     columns=X.columns[sorted_importances_idx],
+        # )
+        # test_importances = pd.DataFrame(
+        #     test_results.importances[sorted_importances_idx].T,
+        #     columns=X.columns[sorted_importances_idx],
+        # )
+        # train_importances = train_importances[train_importances.columns[-5:]]
+        # test_importances = test_importances[test_importances.columns[-5:]]
+        # avg_train_rmse = train_importances[train_importances.columns[-1]].mean()
+        # avg_test_rmse = test_importances[test_importances.columns[-1]].mean()
+        # print(f'Avg train rmse increase: {avg_train_rmse}%')
+        # print(f'Avg test rmse increase: {avg_test_rmse}%')
+        # for name, importances in zip(["train", "test"], [train_importances, test_importances]):
+        #     plt.figure(figsize=(10, 6))
+        #     plt.rcParams.update({'font.size': 12})
+        #     ax = importances.plot.box(vert=False, whis=10)
+        #     ax.set_xlabel("Increase in RMSE (%)")
+        #     ax.axvline(x=0, color="k", linestyle="--")
+        #     ax.figure.tight_layout()
+        #     plt.savefig(f'{model_name}_{name}_PI_{site}.png', dpi=600)
+        #     plt.clf()
     # create_cv_files(dv_data, drop_attrs, model)
 
 
@@ -804,8 +869,8 @@ if __name__ == '__main__':
     ml_data_df = process_dv_data(ml_data_df)
     build_ml_model(ml_data_df, site='dv')
 
-    ml_data_df = prepare_ml_data(site='hb')
-    ml_data_df = process_hb_data(ml_data_df)
+    # ml_data_df = prepare_ml_data(site='hb')
+    # ml_data_df = process_hb_data(ml_data_df)
     # HB, Oregon ML model for future use when there is sufficient pumping data available
     # build_ml_model(ml_data_df, site='hb')
 
