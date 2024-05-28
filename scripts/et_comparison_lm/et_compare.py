@@ -158,5 +158,5 @@ def compare_et(site='dv', unit='mm', plot_title=False):
 
 
 if __name__ == '__main__':
-    compare_et(site='dv', unit='mm')
-    compare_et(site='hb', unit='mm')
+    compare_et(site='dv', unit='ft')
+    #compare_et(site='hb', unit='mm')
