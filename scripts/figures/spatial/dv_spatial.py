@@ -79,7 +79,7 @@ for et_var in et_vars.keys():
 
 
     # Calculate confidence intervals for the slope
-    final_slope = 1.2
+    final_slope = 1.2026788048873083
     final_intercept = 0
 
 

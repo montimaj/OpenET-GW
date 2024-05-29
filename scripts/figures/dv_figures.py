@@ -33,11 +33,10 @@ for year in years:
     q1 = np.percentile(yearly_df.pumping_net_et_ensemble_factor_annual, 25)
     q3 = np.percentile(yearly_df.pumping_net_et_ensemble_factor_annual, 75)
     iqr = q3 - q1
+    ul = q3 + 1.5 * iqr
     ll = q1 - 1.5 * iqr
     if ll < 0:
         ll = np.min(yearly_df.pumping_net_et_ensemble_factor_annual)
-    ul = q3 + 1.5 * iqr
-
     print(year, ll, ul)
     ll_dict[year] = ll
     ul_dict[year] = ul
@@ -48,6 +47,10 @@ ul = np.round(ul_dict[median_year], 2)
 
 dv_data = df[df.pumping_net_et_ensemble_factor_annual < ul]
 dv_data = dv_data[dv_data.pumping_net_et_ensemble_factor_annual > ll]
+print('Samples: ', n, dv_data.shape[0])
+print('Min factor:', dv_data.pumping_net_et_ensemble_factor_annual.min())
+print('Max factor:', dv_data.pumping_net_et_ensemble_factor_annual.max())
+
 
 print('Median year-based LL/UL:', ll, ul)
 
@@ -122,9 +125,13 @@ for et_var in et_vars.keys():
 
     # Calculate confidence intervals for the slope
     final_slope = np.mean(bootstrap_coefs)
+    final_slope_lm = final_slope
     final_intercept = np.mean(bootstrap_intercepts)
+    print('Final slope:', final_slope)
 
     print('Final intercept: ', final_intercept)
+    y_mean = y_train.mean()
+    print(final_intercept / y_mean)
     ci_lower = np.percentile(bootstrap_coefs, (1 - confidence_level) * 100 / 2)
     ci_upper = np.percentile(bootstrap_coefs, 100 - (1 - confidence_level) * 100 / 2)
 
@@ -154,7 +161,7 @@ for et_var in et_vars.keys():
         rc={'xtick.bottom': True, 'ytick.left': True}
     )
 
-    plt_text = '{:.2f}*x \n$R^2$ = {:.3f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
+    plt_text = '{:.3f}*x \n$R^2$ = {:.3f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
     if fit_intercept:
         plt_text = '{:.2f} + '.format(final_intercept) + plt_text
     plt_text = f'y = {plt_text}'
@@ -249,7 +256,7 @@ for et_var in et_vars.keys():
         rc={'xtick.bottom': True, 'ytick.left': True}
     )
 
-    plt_text = '{:.2f}*x \n$R^2$ = {:.3f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
+    plt_text = '{:.3f}*x \n$R^2$ = {:.3f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
     if fit_intercept:
         plt_text = '{:.2f} + '.format(final_intercept) + plt_text
     plt_text = f'y = {plt_text}'
@@ -450,7 +457,7 @@ sns.set_style(
     rc={'xtick.bottom': True, 'ytick.left': True}
 )
 
-plt_text = '{:.2f}*x \n$R^2$ = {:.2f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
+plt_text = '{:.3f}*x \n$R^2$ = {:.2f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
 if fit_intercept:
     plt_text = '{:.2f} + '.format(final_intercept) + plt_text
 plt_text = f'y = {plt_text}'
@@ -518,7 +525,7 @@ sns.set_style(
     rc={'xtick.bottom': True, 'ytick.left': True}
 )
 
-plt_text = '{:.2f}*x \n$R^2$ = {:.2f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
+plt_text = '{:.3f}*x \n$R^2$ = {:.2f} \nRMSE = {:.2f}% \nMAE = {:.2f}% \nCV = {:.2f}%'.format(final_slope, r_squared, rmse,mae, cv)
 if fit_intercept:
     plt_text = '{:.2f} + '.format(final_intercept) + plt_text
 plt_text = f'y = {plt_text}'
@@ -559,48 +566,40 @@ plt.ylabel("GP volume (millions of m$^3$)", fontsize=18)
 
 plt.savefig(f"with_lower_filter/dv_model_volume_scatter_plot_test_intercept_{fit_intercept}.png", bbox_inches='tight', dpi=600)
 
+################################################################
+#                   Diamond Valley Prediceted Pumping (Whole Basin) Metric
+################################################################
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 
-
-#
-#
-# # ################################################################
-# # #                   Diamond Valley Predicted Pumping
-# # ################################################################
-#
-# import pandas as pd
-# import seaborn as sns
-# import matplotlib.pyplot as plt
-# import numpy as np
-#
 # Import et data
-df = pd.read_csv(r'../joined_data/dv_joined_et_pumping_data_all.csv')
-df['est_pumping_mm'] = df['annual_net_et_mm']*1.12
-df['est_pumping_m3'] = df['est_pumping_mm']*df['area_m2']/1000
-df['pumping_m3'] = df['pumping_mm']*df['area_m2']/1000
-# df = df.loc[df['pumping_net_et_factor_annual']<1.5, :]
-# df = df.loc[df['pumping_net_et_factor_annual']>0.5, :]
-# df = df[df["pumping_mm"] > 0]
-
+df = pd.read_csv('../openet_data/dv_openet_data_2018_2022_all.csv')
+df['annual_net_et_mm'] = df['annual_et_mm'] - df['annual_precip_eff_mm']
+df = df.loc[df['annual_net_et_mm'] > 0, :]  # filter out areas with less thatn 10 acres
+df['est_pumping_mm'] = df['annual_net_et_mm'] * 1.1142832550149728  # this changed from the original 1.1
+df['est_pumping_m3'] = df['est_pumping_mm'] * df['area_m2'] / 1000
 
 # Get estimated data
-et_df = df.loc[:, ['year',]].copy()
+et_df = df.loc[:, ['YEAR', ]].copy()
 et_df['data'] = df['est_pumping_m3']
-et_df = et_df.groupby('year').sum()
+et_df = et_df.groupby('YEAR').sum()
 et_df = et_df.reset_index()
-et_df['dataset'] = 'model'
+et_df['dataset'] = 'Model'
 
 # Get estimated data
-pumping_df = df.loc[:, ['year',]].copy()
-pumping_df['data'] = df['pumping_m3']
-pumping_df = pumping_df.groupby('year').sum()
-pumping_df = pumping_df.reset_index()
-pumping_df['dataset'] = 'actual'
+pumping_df = et_df.copy()
+pumping_df['data'] = [75297823, 68638385.42, 88459789.77, 77087599.33, 78900508.69]
+pumping_df['dataset'] = 'Actual'
 
+# Convert to acre-ft
 # combine data
-df_plot = pd.concat([et_df, pumping_df]).sort_values(by=['year', 'data'])
-df_plot['year'] = df_plot['year'].astype(int)
-df_plot['data'] = df_plot['data']/1_000_000
+df_plot = pd.concat([et_df, pumping_df]).sort_values(by=['YEAR', 'data'])
+# df_plot['data'] = df_plot['data'] * 0.000810714 / 1000
+df_plot['YEAR'] = df_plot['YEAR'].astype(int)
+df_plot = df_plot.rename(columns={'YEAR': 'year'})
 
 # Sample data structure (replace this with your actual data)
 data = {
@@ -611,25 +610,44 @@ data = {
 
 df = pd.DataFrame(data)
 
+# Convert to millions of m3
+df['Value'] = df['Value'] / 1e+6
+
 # Create a barplot using Seaborn
 plt.figure(figsize=(10, 6))
-plt.rcParams.update({'font.size': 12})
 sns.set_theme(style="whitegrid")
 
 # Replace 'Value' and 'Category' with your actual column names
 ax = sns.barplot(data=df, x='Year', y='Value', hue='Category')
 
-ax.bar_label(ax.containers[0], fmt='%.1f')
-ax.bar_label(ax.containers[1], fmt='%.1f')
-# Set plot labels and title
-plt.xlabel('Year')
-plt.ylabel('GP volume (Mm$^3$)')
-plt.title('Total vs Modeled Withdrawals Diamond Valley')
+for p in ax.patches[0:10]:
+    ax.annotate(round(p.get_height(), 1), (p.get_x() + p.get_width() / 2., p.get_height() + 1),
+                ha='center', va='center', fontsize=14, color='black', xytext=(0, 5),
+                textcoords='offset points')
 
-plt.ylim(0, 95)
+mae = []
+for index in range(0, 5):
+    model = ax.patches[index].get_height()
+    actual = ax.patches[index + 5].get_height()
+    percent = round((actual - model) * 100 / actual)
+    p = ax.patches[index]
+
+    ax.annotate(f'{percent}%', (p.get_x() + p.get_width() / 2., p.get_height() + 1),
+                ha='center', va='center', fontsize=14, color='black', xytext=(0, -model / 2 * 2.5),
+                textcoords='offset points')
+
+    mae.append(abs(actual - model) * 100 / actual)
+
+plt.axhline(y=76 * 1.233, color='r', linestyle=':', label='NDWR Crop Inventories 2016')
+
+# Set plot labels and title
+plt.xlabel('Year', fontsize=18)
+plt.ylabel('GP volume (Mm3)', fontsize=18)
+
+plt.ylim(0, 100 * 1.233)
 
 # Show the legend
-plt.legend()
+plt.legend(fontsize=14)
 
-plt.savefig('with_lower_filter/dv_bar_plot.png', bbox_inches='tight', dpi=400)
+plt.savefig(r'with_lower_filter/dv_bar_plot_basin_metric.png', dpi=600)
 #

@@ -55,7 +55,7 @@ for et_var in et_vars.keys():
     # Number of data points in the original dataset
     n_data_points = len(X)
 
-    final_slope = 1.11
+    final_slope = 1.1142832550149728
     final_intercept = 0
     prediction_y = X * final_slope + final_intercept
     residuals = y - prediction_y
@@ -64,9 +64,9 @@ for et_var in et_vars.keys():
     # Calculate performance metrics
     mean_y = np.mean(y)
     r_squared = round(r2_score(y, prediction_y), 2)
-    mae = round(mean_absolute_error(y, prediction_y) * 100 / mean_y, 2)
+    mae = round(mean_absolute_error(y, prediction_y) * 100 / mean_y, 3)
     rmse = round(mean_squared_error(y, prediction_y, squared=False) * 100 / mean_y, 2)
-    cv = round(np.std(prediction_y) * 100 / np.mean(prediction_y), 2)
+    cv = round(np.std(prediction_y) * 100 / np.mean(prediction_y), 3)
 
     print(f'R2={r_squared}, MAE={mae}%, RMSE={rmse}%, CV={cv}%')
 

@@ -35,12 +35,12 @@ print(n, df.shape[0])
 
 et_vars = {
         'ensemble': 'OpenET Ensemble',
-        # 'ssebop': 'SSEBop',
-        # 'eemetric': 'eeMETRIC',
-        # 'pt_jpl': 'PT-JPL',
-        # 'sims': 'SIMS',
-        # 'geesebal': 'geeSEBAL',
-        # 'disalexi': 'ALEXI/DisALEXI'
+        'ssebop': 'SSEBop',
+        'eemetric': 'eeMETRIC',
+        'pt_jpl': 'PT-JPL',
+        'sims': 'SIMS',
+        'geesebal': 'geeSEBAL',
+        'disalexi': 'ALEXI/DisALEXI'
 }
 
 for et_var in et_vars.keys():
@@ -88,6 +88,7 @@ for et_var in et_vars.keys():
 
     # Calculate confidence intervals for the slope
     final_slope = np.mean(bootstrap_coefs)
+    print('Final slope:', final_slope)
     final_intercept = np.mean(bootstrap_intercepts)
     print('Final intercept: ', final_intercept)
     ci_lower = np.percentile(bootstrap_coefs, (1 - confidence_level) * 100 / 2)
@@ -280,4 +281,83 @@ plt.ylabel("GP volume (millions of m$^3$)", fontsize=18)
 
 plt.savefig(r"with_lower_filter/hb_model_volume_scatter_plot.png", bbox_inches='tight', dpi=600)
 
+################################################################
+#                  Harney Basin Prediceted Pumping (Whole Basin) Metric
+################################################################
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Import et data
+df = pd.read_csv(r'../joined_data/hb_joined_et_pumping_data_all.csv')
+df['est_pumping_mm'] = df['annual_net_et_mm'] * 1.2
+df['est_pumping_m3'] = df['est_pumping_mm'] * df['area_m2'] / 1000
+df['pumping_m3'] = df['pumping_mm'] * df['area_m2'] / 1000
+
+# Get estimated data
+et_df = df.loc[:, ['year', ]].copy()
+et_df['data'] = df['est_pumping_m3']
+et_df = et_df.groupby('year').sum()
+et_df = et_df.reset_index()
+et_df['dataset'] = 'Model'
+
+# Get estimated data
+pumping_df = df.loc[:, ['year', ]].copy()
+pumping_df['data'] = df['pumping_m3']
+pumping_df = pumping_df.groupby('year').sum()
+pumping_df = pumping_df.reset_index()
+pumping_df['dataset'] = 'Actual'
+
+# combine data
+df_plot = pd.concat([et_df, pumping_df]).sort_values(by=['year', 'data'])
+df_plot['year'] = df_plot['year'].astype(int)
+df_plot['data'] = df_plot['data'] / 1_000_000
+
+# Sample data structure (replace this with your actual data)
+data = {
+    'Year': df_plot.year,
+    'Category': df_plot.dataset,
+    'Value': df_plot.data
+}
+
+df = pd.DataFrame(data)
+
+# Create a barplot using Seaborn
+plt.figure(figsize=(10, 6))
+sns.set_theme(style="whitegrid")
+
+# Replace 'Value' and 'Category' with your actual column names
+ax = sns.barplot(data=df, x='Year', y='Value', hue='Category')
+
+for p in ax.patches[0:14]:
+    ax.annotate(round(p.get_height(), 1), (p.get_x() + p.get_width() / 2., p.get_height() + 1),
+                ha='center', va='center', fontsize=14, color='black', xytext=(0, -12),
+                textcoords='offset points')
+
+mae = []
+for index in range(0, 7):
+    model = ax.patches[index].get_height()
+    actual = ax.patches[index + 7].get_height()
+    percent = round((actual - model) * 100 / actual)
+    p = ax.patches[index]
+
+    ax.annotate(f'{percent}%', (p.get_x() + p.get_width() / 2., p.get_height() + 1),
+                ha='center', va='center', fontsize=14, color='black', xytext=(0, -(model / 15) * 190),
+                textcoords='offset points')
+
+    mae.append(abs(actual - model) * 100 / actual)
+
+# Set plot labels and title
+plt.xlabel('Year', fontsize=14)
+plt.ylabel('GP Volume (Mm3)', fontsize=14)
+# plt.title('Total Pumping vs Modeled Pumping Harney Basin')
+
+plt.ylim(0, 15)
+
+# Show the legend
+plt.legend(fontsize=14)
+
+plt.savefig(r'with_lower_filter/HB_bar_plot_basin_metric.png', dpi=600)
+
+plt.show()
