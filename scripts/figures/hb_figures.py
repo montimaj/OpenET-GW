@@ -359,5 +359,3 @@ plt.ylim(0, 15)
 plt.legend(fontsize=14)
 
 plt.savefig(r'with_lower_filter/HB_bar_plot_basin_metric.png', dpi=600)
-
-plt.show()
