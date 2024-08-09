@@ -3,17 +3,18 @@
 ### PI: [Justin Huntington](https://www.dri.edu/directory/justin-huntington/)
 ### Software authors/maintainers: [Thomas Ott](https://www.dri.edu/directory/thomas-ott/), [Sayantan Majumdar](https://www.dri.edu/directory/sayantan-majumdar/)
 
-<img src="../Readme_Figures/official-dri-logotag-trans-bkgd.png" height="80"/><img src="../Readme_Figures/nv_state_logo.png" height="90"/> <img src="../Readme_Figures/owrd.jpg" height="80"/>
+<img src="../Readme_Figures/official-dri-logotag-trans-bkgd.png" height="80"/><img src="../Readme_Figures/nv_state_logo.png" height="90"/><img src="../Readme_Figures/nwi_logo.png" height="90"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="../Readme_Figures/owrd.jpg" height="80"/>
 
 This software has been successfully tested on the [Apple MacBook Pro 2023](https://www.apple.com/macbook-pro/) (macOS Ventura 13.6.2) and on standard Windows 11 laptop/desktops.
 
 ## Citations
-**Journal**: [Ott, T.J.](https://www.dri.edu/directory/thomas-ott/), [Majumdar, S.](https://www.dri.edu/directory/sayantan-majumdar/), [Huntington, J.L.](https://www.dri.edu/directory/justin-huntington/), 
+**Journal**: [Ott, T.J.](https://www.dri.edu/directory/thomas-ott/), [Majumdar, S.](https://www.dri.edu/directory/sayantan-majumdar/), 
+[Huntington, J.L.](https://www.dri.edu/directory/justin-huntington/), 
 [Pearson, C.](https://www.dri.edu/directory/chris-pearson/), [Bromley, M.](https://www.dri.edu/directory/matthew-bromley/), 
 [Minor, B.A.](https://www.dri.edu/directory/blake-minor/), [ReVelle, P.](https://www.dri.edu/directory/peter-revelle/), [Morton, C.G.](https://www.dri.edu/directory/charles-morton/), 
 [Sueki, S.](https://www.dri.edu/directory/sachiko-sueki/), [Beamer, J.P.](https://www.linkedin.com/in/jordan-beamer-89ba8020/), & 
-[Jasoni, R.](https://www.dri.edu/directory/richard-jasoni/) (2024). 
-Toward Field-Scale Groundwater Pumping and Improved Groundwater Management using Remote Sensing and Climate Data . _Under review in Elsevier [Agricultural Water Management](https://www.sciencedirect.com/journal/agricultural-water-management) special issue on _Irrigation monitoring through Earth Observation (EO) data__.
+[Jasoni, R.](https://www.dri.edu/directory/richard-jasoni/). (2024). 
+Toward Field-Scale Groundwater Pumping and Improved Groundwater Management using Remote Sensing and Climate Data. _[Agricultural Water Management](https://www.sciencedirect.com/journal/agricultural-water-management), 302_, 109000.[https://doi.org/10.1016/j.agwat.2024.109000](https://doi.org/10.1016/j.agwat.2024.109000)
 
 
 ## Running the project
