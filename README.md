@@ -3,7 +3,7 @@
 ### PI: [Justin Huntington](https://www.dri.edu/directory/justin-huntington/)
 ### Software authors/maintainers: [Thomas Ott](https://www.dri.edu/directory/thomas-ott/), [Sayantan Majumdar](https://www.dri.edu/directory/sayantan-majumdar/)
 
-<img src="Readme_Figures/official-dri-logotag-trans-bkgd.png" height="80"/><img src="Readme_Figures/nv_state_logo.png" height="90"/> <img src="Readme_Figures/owrd.jpg" height="80"/>
+<img src="Readme_Figures/official-dri-logotag-trans-bkgd.png" height="80"/><img src="Readme_Figures/nv_state_logo.png" height="90"/><img src="Readme_Figures/NWI_logo.png" height="80"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="Readme_Figures/owrd.jpg" height="80"/>
 
 ## Citations
 **Journal**: [Ott, T.J.](https://www.dri.edu/directory/thomas-ott/), [Majumdar, S.](https://www.dri.edu/directory/sayantan-majumdar/), 
@@ -12,24 +12,30 @@
 [Minor, B.A.](https://www.dri.edu/directory/blake-minor/), [ReVelle, P.](https://www.dri.edu/directory/peter-revelle/), [Morton, C.G.](https://www.dri.edu/directory/charles-morton/), 
 [Sueki, S.](https://www.dri.edu/directory/sachiko-sueki/), [Beamer, J.P.](https://www.linkedin.com/in/jordan-beamer-89ba8020/), & 
 [Jasoni, R.](https://www.dri.edu/directory/richard-jasoni/). (2024). 
-Toward Field-Scale Groundwater Pumping and Improved Groundwater Management using Remote Sensing and Climate Data. _[Agricultural Water Management](https://www.sciencedirect.com/journal/agricultural-water-management)_.[https://doi.org/10.1016/j.agwat.2024.109000](https://doi.org/10.1016/j.agwat.2024.109000)
+Toward Field-Scale Groundwater Pumping and Improved Groundwater Management using Remote Sensing and Climate Data. _[Agricultural Water Management](https://www.sciencedirect.com/journal/agricultural-water-management), 302_, 109000.[https://doi.org/10.1016/j.agwat.2024.109000](https://doi.org/10.1016/j.agwat.2024.109000)
 
 
 ## Abstract
-Groundwater overdraft in western U.S. states has prompted water managers to start the development of groundwater management plans that include mandatory reporting of groundwater pumping (GP) to track water use. 
-Most irrigation systems in the western U.S. are not equipped with irrigation water flow meters to record GP. Of those that do, performing quality assurance and quality control (QAQC) of the metered GP data is difficult due to the lack of reliable secondary GP estimates. 
-We hypothesize that satellite (Landsat)-based actual evapotranspiration (ET) estimates from OpenET can be used to predict GP and aid in QAQC of the metered GP data. For this purpose, the objectives of this study are: 
-1) To pair OpenET estimates of consumptive use (Net ET, i.e., actual ET less effective precipitation) and metered annual GP data from Diamond Valley (DV), Nevada, and Harney Basin (HB), Oregon; 
-2) To evaluate linear regression and ensemble machine learning (ML) models (e.g., Random Forests) to establish the GP vs Net ET relationship; and
-3) To compare GP estimates at the field- and basin-scales. 
+Groundwater overdraft in the western United States has prompted water managers to develop groundwater management plans that include mandatory reporting of groundwater pumping (GP). 
+However, most irrigation systems in this region are not equipped with irrigation water flow meters to record GP and performing quality control of the available metered GP data is difficult due to the scarcity of reliable secondary GP estimates. 
+We hypothesize that Landsat-based actual evapotranspiration (ET) estimates from OpenET can be used to predict GP and aid in quality control of the metered GP data. The objectives of this study are to: 
 
-Results from using a bootstrapping technique showed that the mean absolute errors (MAEs) for field-scale GP depth are 12% and 11% for DV and HB, respectively, and the corresponding root mean square errors (RMSEs) are 15% and 14%. Moreover, the regression models explained 50%-60% variance in GP depth and ~90% variance in GP volumes. The estimated average irrigation efficiency of 88% (92% and 83% for DV and HB, respectively) aligns with known center pivot system efficiencies. Additionally, OpenET proves to be useful for identifying discrepancies in the metered GP data, which are subsequently removed prior to model fitting. Results from this study illustrate the usefulness of satellite-based ET estimates for estimating GP, QAQC metered GP data and have the potential to help estimate historical GP.
+1) Pair OpenET estimates of consumptive use (Net ET, i.e., actual ET less effective precipitation) and metered annual GP data from Diamond Valley, Nevada, and Harney Basin, Oregon;
+2) Evaluate linear regression and machine learning models to establish the GP vs Net ET relationship; and 
+3) Compare GP estimates at the field- and basin-scales. 
+
+Results from using a bootstrapping technique showed that the mean absolute errors and root mean square errors for field-scale GP depth are ∼11 % and ∼14 % across Diamond Valley and Harney Basin based on the OpenET ensemble mean, which showed the highest skill among all the OpenET ET models. 
+Moreover, the regression models explained 50 %-70 % variance in GP depth and ∼90 % variance in GP volumes. Our GP volume estimates are also within 7% and 17% of the total reported and measured volumes in Diamond Valley and Harney Basin, respectively, 
+and the estimated average irrigation efficiency of 87 % aligns with known center-pivot system efficiencies. Additionally, the OpenET ensemble proves to be useful for identifying discrepancies in metered GP data, which are subsequently flagged as outliers. 
+Results from this study illustrate usefulness of satellite-based ET estimates for estimating GP and metered GP data quality control and have the potential to help estimate historical GP.
 
 **Keywords:** groundwater pumping; remote sensing; evapotranspiration; irrigation; machine learning; consumptive use
 
+<img src="Readme_Figures/graphical_abstract.png" />
+
 
 ## Broader Project Summary
-**Title**: [Nevada Water Resources Initiative](http://water.nv.gov/documents/NDWR_Strategic-Plan_FY23-27.pdf)
+**Title**: [Nevada Water Initiative](https://water.nv.gov/programs/nevada-water-initiative)
 
 **Major Goals**: The primary goals will be to estimate water use across the state associated with
 agriculture and natural groundwater discharge areas, and perform data collection and
@@ -43,7 +49,7 @@ state, and water budget assessments in priority basins.
 
 **Agencies involved:**
 
-<img src="Readme_Figures/official-dri-logotag-trans-bkgd.png" height="80"/><img src="Readme_Figures/nv_state_logo.png" height="90"/> <img src="Readme_Figures/USGS_logo.png" height="80"/>
+<img src="Readme_Figures/official-dri-logotag-trans-bkgd.png" height="80"/><img src="Readme_Figures/nv_state_logo.png" height="90"/><img src="Readme_Figures/NWI_logo.png" height="80"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="Readme_Figures/USGS_logo.png" height="80"/>
 
 
 ## Getting Started
@@ -62,6 +68,12 @@ It is important to note that any opinions, findings, conclusions, or recommendat
 ## Related external resources
 
 Brookfield, A. E., Zipper, S., Kendall, A. D., Ajami, H., &#38; Deines, J. M. (2023). Estimating Groundwater Pumping for Irrigation: A Method Comparison. _Groundwater_. https://doi.org/10.1111/gwat.13336
+
+Dunkerly, C., Huntington, J.L., McEvoy, D., Morway, A., Allen, R.G., 2024. agweatherqaqc:
+An Interactive Python Package for Quality Assurance and Quality Control of
+Daily Agricultural Weather Data and Calculation of Reference Evapotranspiration.
+Journal of Open Source Software 9 (97), 6368. https://doi.org/10.21105/
+joss.06368.
 
 Filippelli, S. K., Sloggy, M. R., Vogeler, J. C., Manning, D. T., Goemans, C., & Senay, G. B. (2022). Remote sensing of field-scale irrigation withdrawals in the central Ogallala aquifer region. _Agricultural Water Management_, 271, 107764. https://doi.org/10.1016/j.agwat.2022.107764
 
@@ -85,8 +97,6 @@ Majumdar, S., Smith, R. G., Hasan, M. F., Wilson, J. L., White, V. E., Bristow, 
 
 Martin, D. J., Regan, R. S., Haynes, J. V., Read, A. L., Henson, W. R., Stewart, J. S., Brandt, J. T., & Niswonger, R. G. (2023). Irrigation water use reanalysis for the 2000-20 period by HUC12, month, and year for the conterminous United States: U.S. Geological Survey data release. https://doi.org/10.5066/P9YWR0OJ
 
-Melton, F. S., Huntington, J., Grimm, R., Herring, J., Hall, M., Rollison, D., Erickson, T., Allen, R., Anderson, M., Fisher, J. B., Kilic, A., Senay, G. B., Volk, J., Hain, C., Johnson, L., Ruhoff, A., Blankenau, P., Bromley, M., Carrara, W., … Anderson, R. G. (2021). OpenET: Filling a Critical Data Gap in Water Management for the Western United States. _JAWRA Journal of the American Water Resources Association_. https://doi.org/10.1111/1752-1688.12956
-
-Ott, T. J. (2020). <i>Assessing Groundwater Pumping and Landsat Satellite Crop Evapotranspiration Estimates in Diamond Valley, Nevada for Improved Water Resources Management.</i> https://scholarworks.unr.edu/handle/11714/7423
+Melton, F. S., Huntington, J., Grimm, R., Herring, J., Hall, M., Rollison, D., Erickson, T., Allen, R., Anderson, M., Fisher, J. B., Kilic, A., Senay, G. B., Volk, J., Hain, C., Johnson, L., Ruhoff, A., Blankenau, P., Bromley, M., Carrara, W., … Anderson, R. G. (2022). OpenET: Filling a Critical Data Gap in Water Management for the Western United States. _JAWRA Journal of the American Water Resources Association_. https://doi.org/10.1111/1752-1688.12956
 
 Volk, J. M., Huntington, J. L., Melton, F. S., Allen, R., Anderson, M., Fisher, J. B., Kilic, A., Ruhoff, A., Senay, G. B., Minor, B., Morton, C., Ott, T., Johnson, L., Comini de Andrade, B., Carrara, W., Doherty, C. T., Dunkerly, C., Friedrichs, M., Guzman, A., … Yang, Y. (2024). Assessing the accuracy of OpenET satellite-based evapotranspiration data to support water resource and land management applications. _Nature Water_. https://doi.org/10.1038/s44221-023-00181-7
