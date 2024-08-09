@@ -72,8 +72,7 @@ Brookfield, A. E., Zipper, S., Kendall, A. D., Ajami, H., &#38; Deines, J. M. (2
 Dunkerly, C., Huntington, J.L., McEvoy, D., Morway, A., Allen, R.G., 2024. agweatherqaqc:
 An Interactive Python Package for Quality Assurance and Quality Control of
 Daily Agricultural Weather Data and Calculation of Reference Evapotranspiration.
-Journal of Open Source Software 9 (97), 6368. https://doi.org/10.21105/
-joss.06368.
+Journal of Open Source Software 9 (97), 6368. https://doi.org/10.21105/joss.06368.
 
 Filippelli, S. K., Sloggy, M. R., Vogeler, J. C., Manning, D. T., Goemans, C., & Senay, G. B. (2022). Remote sensing of field-scale irrigation withdrawals in the central Ogallala aquifer region. _Agricultural Water Management_, 271, 107764. https://doi.org/10.1016/j.agwat.2022.107764
 
